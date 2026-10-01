@@ -6,6 +6,9 @@ export interface ClassSession {
   room: string;
   students: number;
   type: 'lecture' | 'lab' | 'tutorial';
+  teacher?: string;
+  teacherEmail?: string;
+  department?: string;
   branch?: string;
   section?: string;
   isSubstitution?: boolean;
@@ -15,6 +18,66 @@ export interface ClassSession {
   coveredBy?: string;
   date?: string;
 }
+
+export interface FacultyProfile {
+  name: string;
+  email: string;
+  department: string;
+  specialization: string;
+  role: string;
+}
+
+export const FACULTY_DIRECTORY: Record<string, FacultyProfile> = {
+  'teacher@edu.com': {
+    name: 'Prof. Sarah Johnson',
+    email: 'teacher@edu.com',
+    department: 'Computer Science',
+    specialization: 'Cloud Computing & Networks',
+    role: 'Professor'
+  },
+  'harinadhv@edu.com': {
+    name: 'Dr. V. Harinadh',
+    email: 'harinadhv@edu.com',
+    department: 'Computer Science',
+    specialization: 'Algorithms & Data Structures',
+    role: 'Associate Professor'
+  },
+  'pradeep@edu.com': {
+    name: 'Prof. Pradeep Juluri',
+    email: 'pradeep@edu.com',
+    department: 'AI & ML',
+    specialization: 'Artificial Intelligence & Machine Learning',
+    role: 'Assistant Professor'
+  },
+  'krishnaa@edu.com': {
+    name: 'Dr. A. Sri Krishna',
+    email: 'krishnaa@edu.com',
+    department: 'Computer Science',
+    specialization: 'Database Systems & Big Data',
+    role: 'Professor & HOD'
+  },
+  'ppravallikan@edu.com': {
+    name: 'Prof. Pravallika Prathikonda',
+    email: 'ppravallikan@edu.com',
+    department: 'Computer Science',
+    specialization: 'Software Engineering & Clean Architecture',
+    role: 'Assistant Professor'
+  },
+  'sailakshmim@edu.com': {
+    name: 'Dr. M. Sailakshmi',
+    email: 'sailakshmim@edu.com',
+    department: 'Mathematics',
+    specialization: 'Applied Mathematics & Optimization',
+    role: 'Associate Professor'
+  },
+  'rajeshk@edu.com': {
+    name: 'Dr. Rajesh Kumar',
+    email: 'rajeshk@edu.com',
+    department: 'Electronics & Communication',
+    specialization: 'VLSI Design & Embedded Systems',
+    role: 'Professor'
+  }
+};
 
 type WeekdayName = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
 
@@ -190,7 +253,203 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
       { id: 'm-sat-1', subject: 'Math Olympiad Problem Session', time: '10:00 AM', duration: '2h', room: 'Room 401', students: 25, type: 'tutorial', branch: 'CSE', section: 'All' }
     ],
     Sunday: []
+  },
+
+  'rajeshk@edu.com': {
+    Monday: [
+      { id: 'r-mon-1', subject: 'Digital Electronics & Logic Design', time: '09:00 AM', duration: '1h 30m', room: 'Room 106', students: 48, type: 'lecture', branch: 'ECE', section: 'A' },
+      { id: 'r-mon-2', subject: 'Microprocessors & Microcontrollers Lab', time: '11:00 AM', duration: '2h', room: 'Lab 201', students: 30, type: 'lab', branch: 'ECE', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'r-tue-1', subject: 'Signals & Linear Systems', time: '10:00 AM', duration: '1h 30m', room: 'Room 106', students: 45, type: 'lecture', branch: 'ECE', section: 'B' },
+      { id: 'r-tue-2', subject: 'Embedded Systems Programming Lab', time: '01:30 PM', duration: '2h', room: 'Lab 201', students: 28, type: 'lab', branch: 'ECE', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'r-wed-1', subject: 'VLSI Architecture & CMOS Circuits', time: '09:00 AM', duration: '1h 30m', room: 'Room 106', students: 42, type: 'lecture', branch: 'ECE', section: 'A' },
+      { id: 'r-wed-2', subject: 'Communication Engineering Lab', time: '11:30 AM', duration: '2h', room: 'Lab 202', students: 30, type: 'lab', branch: 'ECE', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'r-thu-1', subject: 'Wireless Sensor Networks & IoT', time: '10:00 AM', duration: '1h 30m', room: 'Room 106', students: 44, type: 'lecture', branch: 'ECE', section: 'B' },
+      { id: 'r-thu-2', subject: 'FPGA & Verilog Hardware Lab', time: '02:00 PM', duration: '2h', room: 'Lab 201', students: 26, type: 'lab', branch: 'ECE', section: 'B' }
+    ],
+    Friday: [
+      { id: 'r-fri-1', subject: 'IoT Sensors & Embedded Actuators', time: '09:00 AM', duration: '1h 30m', room: 'Room 106', students: 46, type: 'lecture', branch: 'ECE', section: 'A' },
+      { id: 'r-fri-2', subject: 'Embedded Systems Capstone Review', time: '01:30 PM', duration: '2h', room: 'Lab 201', students: 25, type: 'lab', branch: 'ECE', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'r-sat-1', subject: 'Robotics & Hardware Automation Workshop', time: '10:00 AM', duration: '2h', room: 'Lab 201', students: 35, type: 'lab', branch: 'ECE', section: 'All' }
+    ],
+    Sunday: []
   }
+};
+
+/**
+ * Normalizes time string e.g. '09:00 AM' vs '9:00 AM'
+ */
+const normalizeTimeSlot = (timeStr: string = '') => {
+  return timeStr.replace(/^0+/, '').replace(/\s+/g, ' ').toLowerCase().trim();
+};
+
+/**
+ * Converts time slot (e.g. '09:00 AM', '01:30 PM') to total minutes for proper chronological sorting
+ */
+const timeToMinutes = (timeStr: string = ''): number => {
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return 9999;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === 'PM' && hours !== 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+};
+
+/**
+ * Returns all college sessions scheduled for a given calendar date,
+ * dynamically changing day-to-day (Monday through Saturday, with Sunday as weekend).
+ * Includes faculty details, department, room, and live substitute coverage annotations.
+ */
+export const getAllCollegeClassesForDate = (
+  date: Date,
+  options?: {
+    department?: string;
+    branch?: string;
+    teacherEmail?: string;
+    substituteLeaves?: any[];
+  }
+): ClassSession[] => {
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }) as WeekdayName;
+  if (dayName === 'Sunday') {
+    return [];
+  }
+
+  const result: ClassSession[] = [];
+  const targetTeacher = (options?.teacherEmail || 'All').toLowerCase().trim();
+  const targetDept = options?.department || 'All';
+  const targetBranch = options?.branch || 'All';
+  const substituteLeaves = options?.substituteLeaves || [];
+
+  for (const [email, profile] of Object.entries(FACULTY_DIRECTORY)) {
+    const lowerEmail = email.toLowerCase().trim();
+
+    // Check teacher email filter
+    if (targetTeacher !== 'all' && targetTeacher !== lowerEmail) {
+      continue;
+    }
+
+    // Check department filter
+    if (targetDept !== 'All' && profile.department !== targetDept) {
+      continue;
+    }
+
+    const teacherTimetable = TEACHER_TIMETABLES[lowerEmail];
+    if (!teacherTimetable) continue;
+
+    const dayClasses = teacherTimetable[dayName] || [];
+
+    for (const session of dayClasses) {
+      // Check branch filter
+      if (targetBranch !== 'All' && session.branch && session.branch !== targetBranch) {
+        continue;
+      }
+
+      let isCovered = false;
+      let coveredBy = '';
+
+      // Check if this class is covered by an accepted peer substitute on this date
+      if (Array.isArray(substituteLeaves)) {
+        for (const leave of substituteLeaves) {
+          if (leave.teacherEmail && leave.teacherEmail.toLowerCase().trim() === lowerEmail) {
+            if (Array.isArray(leave.affectedClasses)) {
+              for (const cls of leave.affectedClasses) {
+                const isMatchDate = isSameCalendarDate(cls.date || leave.startDate, date);
+                const isTimeMatch = normalizeTimeSlot(cls.time) === normalizeTimeSlot(session.time);
+                const isAccepted = cls.substituteStatus === 'accepted';
+
+                if (isMatchDate && (session.id === cls.classId || isTimeMatch) && isAccepted && cls.substituteTeacher) {
+                  isCovered = true;
+                  coveredBy = cls.substituteTeacher;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      result.push({
+        ...session,
+        id: session.id || `${lowerEmail}-${dayName}-${session.time}`,
+        teacher: profile.name,
+        teacherEmail: email,
+        department: profile.department,
+        date: date.toISOString().split('T')[0],
+        isCovered,
+        coveredBy
+      });
+    }
+  }
+
+  // Also include any accepted substitute coverage where another teacher is filling in
+  if (Array.isArray(substituteLeaves)) {
+    for (const leave of substituteLeaves) {
+      if (Array.isArray(leave.affectedClasses)) {
+        for (const cls of leave.affectedClasses) {
+          const isMatchDate = isSameCalendarDate(cls.date || leave.startDate, date);
+          const isAccepted = cls.substituteStatus === 'accepted';
+
+          if (isMatchDate && isAccepted) {
+            const subTeacherEmail = (cls.substituteTeacher || '').toLowerCase().trim();
+            const subProfile = FACULTY_DIRECTORY[subTeacherEmail] || {
+              name: cls.substituteTeacher || 'Faculty Member',
+              email: subTeacherEmail,
+              department: 'General',
+              specialization: 'Faculty Cover',
+              role: 'Teacher'
+            };
+
+            if (targetTeacher !== 'all' && targetTeacher !== subTeacherEmail) {
+              continue;
+            }
+            if (targetDept !== 'All' && subProfile.department !== targetDept) {
+              continue;
+            }
+            if (targetBranch !== 'All' && cls.branch && cls.branch !== targetBranch) {
+              continue;
+            }
+
+            const alreadyExists = result.some(r => 
+              r.isSubstitution && 
+              r.teacherEmail?.toLowerCase() === subTeacherEmail && 
+              normalizeTimeSlot(r.time) === normalizeTimeSlot(cls.time)
+            );
+
+            if (!alreadyExists) {
+              result.push({
+                id: cls.classId || cls._id || `sub-${Math.random()}`,
+                subject: cls.subject || 'Cover Class',
+                time: cls.time || '10:00 AM',
+                duration: cls.duration || '1h 30m',
+                room: cls.room || 'Assigned Room',
+                students: cls.students || 35,
+                type: cls.type || 'lecture',
+                branch: cls.branch || 'CSE',
+                section: cls.section || 'A',
+                teacher: subProfile.name,
+                teacherEmail: cls.substituteTeacher,
+                department: subProfile.department,
+                isSubstitution: true,
+                substituteFor: leave.teacherEmail,
+                substituteReason: leave.reason,
+                date: date.toISOString().split('T')[0]
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return result.sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 };
 
 /**
@@ -282,13 +541,6 @@ export const isSameCalendarDate = (date1: string | Date | undefined, date2: stri
   const p2 = parseYearMonthDay(date2);
   if (!p1 || !p2) return false;
   return p1.y === p2.y && p1.m === p2.m && p1.d === p2.d;
-};
-
-/**
- * Normalizes time string e.g. '09:00 AM' vs '9:00 AM'
- */
-const normalizeTimeSlot = (timeStr: string = '') => {
-  return timeStr.replace(/^0+/, '').replace(/\s+/g, ' ').toLowerCase().trim();
 };
 
 /**

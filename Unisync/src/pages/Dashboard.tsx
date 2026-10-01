@@ -1242,23 +1242,6 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
                         }`}>
                           {isAccepted ? '✓ Took Place (Accepted)' : isRejected ? '✕ Declined' : '⏳ Pending Response'}
                         </span>
-
-                        {userType === 'admin' && sub.status !== "approved" && sub.status !== "rejected" && (
-                          <div className="flex gap-1.5 ml-2">
-                            <button 
-                              onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'approve')}
-                              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
-                            >
-                              Approve
-                            </button>
-                            <button 
-                              onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'reject')}
-                              className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -1504,45 +1487,54 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
     );
 
       case 'class-schedule':
-        return userType === "admin"
-          ? <WeeklyScheduleView selectedDate={selectedDate} userType={userType} />
-          : (
-            <div className="space-y-4">
-              <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-                <div>
-                  <h3 className="font-bold text-gray-900 text-sm">Class Schedule & Timetable</h3>
-                  <p className="text-xs text-gray-500">Toggle between your personal daily schedule and the department weekly timetable</p>
-                </div>
-                <div className="flex bg-gray-100 p-1 rounded-lg">
-                  <button
-                    onClick={() => setScheduleViewMode('daily')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                      scheduleViewMode === 'daily' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    📅 Daily Schedule
-                  </button>
-                  <button
-                    onClick={() => setScheduleViewMode('weekly')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                      scheduleViewMode === 'weekly' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    📊 Department Timetable
-                  </button>
-                </div>
+        return (
+          <div className="space-y-4">
+            <div className="bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm">
+                  {userType === 'admin' ? 'University Timetable & Daily Schedule Management' : 'Class Schedule & Timetable'}
+                </h3>
+                <p className="text-xs text-gray-500">
+                  {userType === 'admin' 
+                    ? 'Day-to-day college timetable, faculty lectures, and departmental weekly timetable grid' 
+                    : 'Toggle between your personal daily schedule and the department weekly timetable'}
+                </p>
               </div>
+              <div className="flex bg-gray-100 p-1 rounded-lg self-start sm:self-auto">
+                <button
+                  onClick={() => setScheduleViewMode('daily')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                    scheduleViewMode === 'daily' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  📅 Day-to-Day Schedule
+                </button>
+                <button
+                  onClick={() => setScheduleViewMode('weekly')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                    scheduleViewMode === 'weekly' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  📊 Department Weekly Grid
+                </button>
+              </div>
+            </div>
 
-              {scheduleViewMode === 'daily' ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {scheduleViewMode === 'daily' ? (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-1">
                   <Calendar 
                     selectedDate={selectedDate} 
                     onDateSelect={setSelectedDate} 
                     substituteLeaves={allRelevantLeaves}
                   />
+                </div>
+                <div className="lg:col-span-2">
                   <ClassScheduleView 
                     selectedDate={selectedDate} 
                     userEmail={userEmail} 
+                    userType={userType}
+                    onDateChange={setSelectedDate}
                     substituteLeaves={allRelevantLeaves}
                     onRequestAdjustment={(session: any) => {
                       setSelectedClassForAdjustment({
@@ -1553,11 +1545,12 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
                     }}
                   />
                 </div>
-              ) : (
-                <WeeklyScheduleView selectedDate={selectedDate} userType={userType} />
-              )}
-            </div>
-          );
+              </div>
+            ) : (
+              <WeeklyScheduleView selectedDate={selectedDate} userType={userType} />
+            )}
+          </div>
+        );
 
       case 'emergency-adjustments':
         return <AdminClassAdjustments onCreateAdjustment={handleNewClassAdjustment} />;

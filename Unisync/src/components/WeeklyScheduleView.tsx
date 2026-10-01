@@ -34,7 +34,6 @@ export const WeeklyScheduleView = ({ selectedDate, userType }: WeeklyScheduleVie
   const [selectedBranch, setSelectedBranch] = useState('CSE');
   const [selectedSection, setSelectedSection] = useState('A');
   const [currentWeek, setCurrentWeek] = useState(selectedDate);
-  const [adjustmentActions, setAdjustmentActions] = useState<{[key: string]: 'approved' | 'not_approved' | null}>({});
 
   const departments = [
     'Computer Science',
@@ -257,7 +256,62 @@ export const WeeklyScheduleView = ({ selectedDate, userType }: WeeklyScheduleVie
         branch: 'CSE',
         section: 'B'
       }
-    ]
+    ],
+    'Saturday': [
+      {
+        id: 'sat-1',
+        subject: 'Industry Case Studies & Tech Talk',
+        time: '10:00 AM',
+        duration: '2h',
+        room: 'Auditorium A',
+        teacher: 'Prof. Sarah Johnson',
+        students: 60,
+        type: 'lecture',
+        department: 'Computer Science',
+        branch: 'CSE',
+        section: 'A'
+      },
+      {
+        id: 'sat-2',
+        subject: 'Coding Olympiad & Hackathon Coaching',
+        time: '11:00 AM',
+        duration: '2h',
+        room: 'Lab 303',
+        teacher: 'Dr. V. Harinadh',
+        students: 35,
+        type: 'lab',
+        department: 'Computer Science',
+        branch: 'CSE',
+        section: 'B'
+      },
+      {
+        id: 'sat-3',
+        subject: 'Full Stack Project Mentoring Lab',
+        time: '01:00 PM',
+        duration: '2h',
+        room: 'Lab 301',
+        teacher: 'Prof. Pravallika Prathikonda',
+        students: 30,
+        type: 'lab',
+        department: 'Computer Science',
+        branch: 'CSE',
+        section: 'A'
+      },
+      {
+        id: 'sat-4',
+        subject: 'Data Science & Generative AI Workshop',
+        time: '10:00 AM',
+        duration: '2h',
+        room: 'Lab 302',
+        teacher: 'Prof. Pradeep Juluri',
+        students: 40,
+        type: 'lab',
+        department: 'Computer Science',
+        branch: 'AI & ML',
+        section: 'A'
+      }
+    ],
+    'Sunday': []
   };
 
   const getWeekDays = (date: Date) => {
@@ -314,14 +368,6 @@ export const WeeklyScheduleView = ({ selectedDate, userType }: WeeklyScheduleVie
     const start = weekDays[0];
     const end = weekDays[6];
     return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
-  };
-
-  const handleAdjustmentAction = (classId: string, action: 'approve' | 'reject') => {
-    const status = action === 'approve' ? 'approved' : 'not_approved';
-    setAdjustmentActions(prev => ({
-      ...prev,
-      [classId]: status
-    }));
   };
 
   return (
@@ -511,43 +557,11 @@ export const WeeklyScheduleView = ({ selectedDate, userType }: WeeklyScheduleVie
                           </div>
                         </div>
 
-                        {userType === 'admin' && classAtTime.isAdjusted && (
-                          <div className="flex flex-col gap-1 mt-2 pt-1 border-t border-gray-100">
-                            {adjustmentActions[classAtTime.id] ? (
-                              <div className="flex items-center justify-between gap-1">
-                                <span className={`px-2 py-0.5 text-[11px] rounded font-bold flex items-center gap-1 ${
-                                  adjustmentActions[classAtTime.id] === 'approved' 
-                                    ? 'bg-green-100 text-green-800 border border-green-300' 
-                                    : 'bg-red-100 text-red-800 border border-red-300'
-                                }`}>
-                                  {adjustmentActions[classAtTime.id] === 'approved' ? '✓ Approved' : '✕ Not Approved'}
-                                </span>
-                                <button 
-                                  onClick={() => handleAdjustmentAction(classAtTime.id, adjustmentActions[classAtTime.id] === 'approved' ? 'reject' : 'approve')}
-                                  className="text-[10px] text-gray-500 hover:text-gray-800 underline"
-                                  title="Change approval status"
-                                >
-                                  Edit
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <button 
-                                  onClick={() => handleAdjustmentAction(classAtTime.id, 'approve')}
-                                  className="px-2 py-0.5 bg-green-600 text-white text-[11px] font-bold rounded hover:bg-green-700 transition-colors shadow-sm flex items-center gap-1"
-                                  title="Click correct mark (Approve)"
-                                >
-                                  ✓ Approved
-                                </button>
-                                <button 
-                                  onClick={() => handleAdjustmentAction(classAtTime.id, 'reject')}
-                                  className="px-2 py-0.5 bg-red-600 text-white text-[11px] font-bold rounded hover:bg-red-700 transition-colors shadow-sm flex items-center gap-1"
-                                  title="Click wrong mark (Not Approved)"
-                                >
-                                  ✕ Not Approved
-                                </button>
-                              </div>
-                            )}
+                        {classAtTime.isAdjusted && (
+                          <div className="flex items-center gap-1 mt-1.5 pt-1 border-t border-gray-100">
+                            <span className="text-[10px] font-semibold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
+                              🔄 Peer Covered
+                            </span>
                           </div>
                         )}
                       </div>
