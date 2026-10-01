@@ -271,8 +271,19 @@ router.get("/admin", async (req, res) => {
       { $set: { status: "ready_for_admin" } }
     );
 
-    const leaves = await Leave.find({ type: { $ne: "substitution" } }).sort({ createdAt: -1, _id: -1 });
+    // Return all leaves including peer substitutions so admin can monitor all requests and substitution counts
+    const leaves = await Leave.find().sort({ createdAt: -1, _id: -1 });
     res.json(leaves);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Dedicated endpoint to fetch all substitutions for Admin
+router.get("/substitutions", async (req, res) => {
+  try {
+    const substitutions = await Leave.find({ type: "substitution" }).sort({ createdAt: -1, _id: -1 });
+    res.json(substitutions);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

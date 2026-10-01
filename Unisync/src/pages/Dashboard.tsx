@@ -31,6 +31,8 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
   const [selectedClassForAdjustment, setSelectedClassForAdjustment] = useState<any>(null);
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
   const [scheduleViewMode, setScheduleViewMode] = useState<'daily' | 'weekly'>('daily');
+  const [subFilterTab, setSubFilterTab] = useState<'all' | 'accepted' | 'pending' | 'rejected'>('all');
+  const [subSearchQuery, setSubSearchQuery] = useState('');
 
   // ✅ Fetch current logged in user profile
   const fetchUserProfile = async () => {
@@ -252,6 +254,25 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
   }, 0);
 
   const pendingLeavesCount = leaveRequests.filter(r => r.type !== 'substitution' && r.status !== 'approved' && r.status !== 'rejected').length;
+  
+  // ✅ Detailed substitution analytics for Admin and Faculty
+  const allSubstitutionRequests = leaveRequests.filter(req => req.type === 'substitution');
+  const acceptedSubs = allSubstitutionRequests.filter(sub => 
+    sub.status === 'approved' || (sub.affectedClasses && sub.affectedClasses.some((c: any) => c.substituteStatus === 'accepted'))
+  );
+  const rejectedSubs = allSubstitutionRequests.filter(sub => 
+    sub.status === 'rejected' || (sub.affectedClasses && sub.affectedClasses.length > 0 && sub.affectedClasses.every((c: any) => c.substituteStatus === 'rejected'))
+  );
+  const pendingSubs = allSubstitutionRequests.filter(sub => 
+    !acceptedSubs.includes(sub) && !rejectedSubs.includes(sub)
+  );
+  const totalSubstitutedClasses = allSubstitutionRequests.reduce((total, sub) => {
+    if (sub.affectedClasses && sub.affectedClasses.length > 0) {
+      return total + sub.affectedClasses.filter((c: any) => c.substituteStatus === 'accepted' || sub.status === 'approved').length;
+    }
+    return total + (sub.status === 'approved' ? 1 : 0);
+  }, 0);
+
   const allRelevantLeaves = [...substituteLeaves, ...leaveRequests];
 
   // ---------------- SECTIONS ----------------
@@ -267,7 +288,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
     { id: 'overview', name: 'Overview', icon: '📊' },
     { id: 'all-requests', name: 'All Requests', icon: '📋' },
     { id: 'leave-requests', name: 'Leave Requests', icon: '📝', badge: pendingLeavesCount },
-    { id: 'substitute-requests', name: 'Substitute Requests', icon: '🔄' },
+    { id: 'substitute-requests', name: 'Substitute Requests', icon: '🔄', badge: allSubstitutionRequests.length > 0 ? allSubstitutionRequests.length : undefined },
     { id: 'registration-approvals', name: 'Registration Approvals', icon: '✅', badge: registrationRequests.length },
     { id: 'class-schedule', name: 'Schedule', icon: '📅' },
     { id: 'emergency-adjustments', name: 'Adjustments', icon: '🚨' },
@@ -292,42 +313,76 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
               </div>
 
               {/* Statistics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Leaves</h3>
-                  <p className="text-3xl font-bold text-blue-600">
-                    {leaveRequests.filter(r => r.status !== 'approved' && r.status !== 'rejected').length}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pending Leaves</h3>
+                    <span className="text-base">📝</span>
+                  </div>
+                  <p className="text-3xl font-extrabold text-blue-600">
+                    {pendingLeavesCount}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">Official leaves awaiting review</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-purple-100 bg-gradient-to-br from-white to-purple-50/40 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Substitutions</h3>
+                    <span className="text-xs bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded-full">🔄 Live</span>
+                  </div>
+                  <p className="text-3xl font-extrabold text-purple-700">
+                    {acceptedSubs.length}
+                  </p>
+                  <p className="text-xs text-purple-600 font-medium mt-1">
+                    {allSubstitutionRequests.length} total • {pendingSubs.length} pending
                   </p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">Pending Registrations</h3>
-                  <p className="text-3xl font-bold text-yellow-600">{registrationRequests.length}</p>
+
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pending Registrations</h3>
+                    <span className="text-base">👤</span>
+                  </div>
+                  <p className="text-3xl font-extrabold text-amber-500">{registrationRequests.length}</p>
+                  <p className="text-xs text-gray-400 mt-1">Faculty awaiting signup approval</p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">Active Teachers</h3>
-                  <p className="text-3xl font-bold text-green-600">{adminStats?.activeTeachers ?? 0}</p>
+
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Teachers</h3>
+                    <span className="text-base">👨‍🏫</span>
+                  </div>
+                  <p className="text-3xl font-extrabold text-emerald-600">{adminStats?.activeTeachers ?? 0}</p>
+                  <p className="text-xs text-gray-400 mt-1">Faculty currently active</p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">Substituting Teachers</h3>
-                  <p className="text-3xl font-bold text-purple-600">{adminStats?.substituteTeachers ?? 0}</p>
+
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Classes Adjusted</h3>
+                    <span className="text-base">🏫</span>
+                  </div>
+                  <p className="text-3xl font-extrabold text-indigo-600">{totalSubstitutedClasses}</p>
+                  <p className="text-xs text-gray-400 mt-1">Substituted class hours</p>
                 </div>
               </div>
 
               {/* Recent Activity Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Recent Leave Requests</h3>
-                    <button onClick={() => setActiveSection('leave-requests')} className="text-xs text-blue-600 hover:underline">View All</button>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-base font-bold text-gray-900 flex items-center gap-1.5">
+                      <span>📝</span> Recent Leaves
+                    </h3>
+                    <button onClick={() => setActiveSection('leave-requests')} className="text-xs text-blue-600 hover:underline font-semibold">View All</button>
                   </div>
-                  <div className="space-y-3">
-                    {leaveRequests.slice(0, 3).map((request: any) => (
-                      <div key={request._id || request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                        <div>
-                          <p className="font-medium text-sm text-gray-900">{request.teacherEmail}</p>
-                          <p className="text-xs text-gray-500">Reason: {request.reason}</p>
+                  <div className="space-y-2.5">
+                    {leaveRequests.filter(r => r.type !== 'substitution').slice(0, 3).map((request: any) => (
+                      <div key={request._id || request.id} className="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+                        <div className="truncate mr-2">
+                          <p className="font-semibold text-xs text-gray-900 truncate">{request.teacherEmail}</p>
+                          <p className="text-[11px] text-gray-500 truncate">{request.reason}</p>
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-xs font-semibold capitalize ${
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize whitespace-nowrap ${
                           request.status === 'approved' ? 'bg-green-100 text-green-800' :
                           request.status === 'rejected' ? 'bg-red-100 text-red-800' :
                           'bg-yellow-100 text-yellow-800'
@@ -336,28 +391,71 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
                         </span>
                       </div>
                     ))}
-                    {leaveRequests.length === 0 && <p className="text-sm text-gray-500">No leave requests found</p>}
+                    {leaveRequests.filter(r => r.type !== 'substitution').length === 0 && <p className="text-xs text-gray-400 py-6 text-center">No leave requests found</p>}
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Pending Registrations</h3>
-                    <button onClick={() => setActiveSection('registration-approvals')} className="text-xs text-blue-600 hover:underline">View All</button>
+                {/* Recent Substitutions Widget */}
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-purple-100">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-base font-bold text-gray-900 flex items-center gap-1.5">
+                      <span>🔄</span> Recent Substitutions
+                    </h3>
+                    <button onClick={() => setActiveSection('substitute-requests')} className="text-xs text-purple-600 hover:underline font-semibold">
+                      View All ({allSubstitutionRequests.length})
+                    </button>
                   </div>
-                  <div className="space-y-3">
-                    {registrationRequests.slice(0, 3).map((request) => (
-                      <div key={request._id || request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                        <div>
-                          <p className="font-medium text-sm text-gray-900">{request.name || 'Anonymous'}</p>
-                          <p className="text-xs text-gray-500">{request.email}</p>
+                  <div className="space-y-2.5">
+                    {allSubstitutionRequests.slice(0, 3).map((sub: any) => {
+                      const firstClass = sub.affectedClasses?.[0];
+                      const isAccepted = sub.status === 'approved' || firstClass?.substituteStatus === 'accepted';
+                      return (
+                        <div key={sub._id || sub.id} className="p-2.5 bg-purple-50/40 rounded-lg border border-purple-100">
+                          <div className="flex justify-between items-start">
+                            <div className="truncate mr-2">
+                              <p className="font-semibold text-xs text-gray-900 truncate">{sub.teacherEmail}</p>
+                              <p className="text-[11px] text-purple-700 font-medium truncate">
+                                ➔ Sub: {firstClass?.substituteTeacher || 'Not Assigned'}
+                              </p>
+                              <p className="text-[10px] text-gray-500 mt-0.5">
+                                {firstClass?.subject || 'Class'} • {formatDate(sub.startDate)}
+                              </p>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize whitespace-nowrap ${
+                              isAccepted ? 'bg-green-100 text-green-800' :
+                              sub.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                              'bg-amber-100 text-amber-800'
+                            }`}>
+                              {isAccepted ? '✓ Took Place' : sub.status === 'rejected' ? 'Declined' : 'Pending'}
+                            </span>
+                          </div>
                         </div>
-                        <span className="px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800">
+                      );
+                    })}
+                    {allSubstitutionRequests.length === 0 && <p className="text-xs text-gray-400 py-6 text-center">No substitution requests recorded yet</p>}
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-base font-bold text-gray-900 flex items-center gap-1.5">
+                      <span>👤</span> Registrations
+                    </h3>
+                    <button onClick={() => setActiveSection('registration-approvals')} className="text-xs text-blue-600 hover:underline font-semibold">View All</button>
+                  </div>
+                  <div className="space-y-2.5">
+                    {registrationRequests.slice(0, 3).map((request) => (
+                      <div key={request._id || request.id} className="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+                        <div className="truncate mr-2">
+                          <p className="font-semibold text-xs text-gray-900 truncate">{request.name || 'Anonymous'}</p>
+                          <p className="text-[11px] text-gray-500 truncate">{request.email}</p>
+                        </div>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 whitespace-nowrap">
                           Pending
                         </span>
                       </div>
                     ))}
-                    {registrationRequests.length === 0 && <p className="text-sm text-gray-500">No pending registration requests</p>}
+                    {registrationRequests.length === 0 && <p className="text-xs text-gray-400 py-6 text-center">No pending registrations</p>}
                   </div>
                 </div>
               </div>
@@ -695,75 +793,112 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
       case 'all-requests':
         return (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">All Requests Overview</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">All Requests Overview</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-medium text-blue-800 mb-2">Leave Requests</h3>
-                  <p className="text-2xl font-bold text-blue-600">{leaveRequests.length}</p>
-                  <p className="text-sm text-blue-600">
-                    {leaveRequests.filter(r => r.status !== 'approved' && r.status !== 'rejected').length} pending
+                <div className="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
+                  <h3 className="font-semibold text-blue-900 text-sm mb-1">Leave Requests</h3>
+                  <p className="text-3xl font-black text-blue-600">{leaveRequests.filter(r => r.type !== 'substitution').length}</p>
+                  <p className="text-xs text-blue-600 font-medium mt-1">
+                    {pendingLeavesCount} pending approval
                   </p>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="font-medium text-green-800 mb-2">Registration Requests</h3>
-                  <p className="text-2xl font-bold text-green-600">{registrationRequests.length}</p>
-                  <p className="text-sm text-green-600">
-                    {registrationRequests.filter(r => r.status === 'pending').length} pending
+                <div className="bg-purple-50/70 p-4 rounded-xl border border-purple-100">
+                  <h3 className="font-semibold text-purple-900 text-sm mb-1">Class Substitutions</h3>
+                  <p className="text-3xl font-black text-purple-600">{allSubstitutionRequests.length}</p>
+                  <p className="text-xs text-purple-600 font-medium mt-1">
+                    {acceptedSubs.length} took place • {pendingSubs.length} pending
                   </p>
                 </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <h3 className="font-medium text-purple-800 mb-2">Substitute Covers</h3>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {leaveRequests.reduce((sum, r) => sum + (r.affectedClasses ? r.affectedClasses.length : 0), 0)}
-                  </p>
-                  <p className="text-sm text-purple-600">
-                    {leaveRequests.reduce((sum, r) => sum + (r.affectedClasses ? r.affectedClasses.filter((c: any) => c.substituteStatus === 'pending').length : 0), 0)} pending
+                <div className="bg-amber-50/70 p-4 rounded-xl border border-amber-100">
+                  <h3 className="font-semibold text-amber-900 text-sm mb-1">Registration Requests</h3>
+                  <p className="text-3xl font-black text-amber-600">{registrationRequests.length}</p>
+                  <p className="text-xs text-amber-600 font-medium mt-1">
+                    {registrationRequests.filter(r => r.status === 'pending').length} pending approval
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Leave Requests</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-base font-bold text-gray-900">Recent Leaves</h3>
+                  <button onClick={() => setActiveSection('leave-requests')} className="text-xs text-blue-600 hover:underline font-semibold">View All</button>
+                </div>
                 <div className="space-y-3">
                   {leaveRequests.filter((r: any) => r.type !== 'substitution').slice(0, 3).map((request: any) => (
-                    <div key={request._id || request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                      <div>
-                        <p className="font-medium text-gray-900">{request.teacherEmail}</p>
-                        <p className="text-xs text-gray-500">Reason: {request.reason}</p>
-                        <p className="text-xs text-gray-500">{formatDate(request.startDate)} - {formatDate(request.endDate)}</p>
+                    <div key={request._id || request.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                      <div className="flex justify-between items-start">
+                        <div className="truncate mr-2">
+                          <p className="font-semibold text-xs text-gray-900 truncate">{request.teacherEmail}</p>
+                          <p className="text-[11px] text-gray-500 truncate">Reason: {request.reason}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(request.startDate)} - {formatDate(request.endDate)}</p>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize whitespace-nowrap ${
+                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          request.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {request.status.replace("_", " ")}
+                        </span>
                       </div>
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${
-                        request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        request.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {request.status.replace("_", " ")}
-                      </span>
                     </div>
                   ))}
-                  {leaveRequests.filter((r: any) => r.type !== 'substitution').length === 0 && <p className="text-sm text-gray-500">No leave requests found</p>}
+                  {leaveRequests.filter((r: any) => r.type !== 'substitution').length === 0 && <p className="text-xs text-gray-400 py-4 text-center">No leave requests found</p>}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm border border-purple-100 p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-base font-bold text-gray-900">Recent Substitutions</h3>
+                  <button onClick={() => setActiveSection('substitute-requests')} className="text-xs text-purple-600 hover:underline font-semibold">View All ({allSubstitutionRequests.length})</button>
+                </div>
+                <div className="space-y-3">
+                  {allSubstitutionRequests.slice(0, 3).map((sub: any) => {
+                    const firstClass = sub.affectedClasses?.[0];
+                    const isAccepted = sub.status === 'approved' || firstClass?.substituteStatus === 'accepted';
+                    return (
+                      <div key={sub._id || sub.id} className="p-3 bg-purple-50/40 rounded-lg border border-purple-100/70">
+                        <div className="flex justify-between items-start">
+                          <div className="truncate mr-2">
+                            <p className="font-semibold text-xs text-gray-900 truncate">{sub.teacherEmail}</p>
+                            <p className="text-[11px] text-purple-700 font-medium truncate">➔ Sub: {firstClass?.substituteTeacher || 'None Assigned'}</p>
+                            <p className="text-[10px] text-gray-500 mt-0.5">{firstClass?.subject || 'Class'} • {formatDate(sub.startDate)}</p>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize whitespace-nowrap ${
+                            isAccepted ? 'bg-green-100 text-green-800' :
+                            sub.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                            'bg-amber-100 text-amber-800'
+                          }`}>
+                            {isAccepted ? '✓ Took Place' : sub.status === 'rejected' ? 'Declined' : 'Pending'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {allSubstitutionRequests.length === 0 && <p className="text-xs text-gray-400 py-4 text-center">No substitutions recorded</p>}
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Registration Requests</h3>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-base font-bold text-gray-900">Registrations</h3>
+                  <button onClick={() => setActiveSection('registration-approvals')} className="text-xs text-blue-600 hover:underline font-semibold">View All</button>
+                </div>
                 <div className="space-y-3">
                   {registrationRequests.slice(0, 3).map((request) => (
-                    <div key={request._id || request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                      <div>
-                        <p className="font-medium text-gray-900">{request.name || 'Anonymous'}</p>
-                        <p className="text-xs text-gray-500">{request.email}</p>
-                        <p className="text-xs text-gray-500">Dept: {request.department || 'N/A'} | ID: {request.employeeId || 'N/A'}</p>
+                    <div key={request._id || request.id} className="p-3 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-between">
+                      <div className="truncate mr-2">
+                        <p className="font-semibold text-xs text-gray-900 truncate">{request.name || 'Anonymous'}</p>
+                        <p className="text-[11px] text-gray-500 truncate">{request.email}</p>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 whitespace-nowrap">
                         Pending
                       </span>
                     </div>
                   ))}
-                  {registrationRequests.length === 0 && <p className="text-sm text-gray-500">No pending registration requests</p>}
+                  {registrationRequests.length === 0 && <p className="text-xs text-gray-400 py-4 text-center">No pending registration requests</p>}
                 </div>
               </div>
             </div>
@@ -915,95 +1050,263 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
 
   case 'substitute-requests':
     if (userType === 'admin') {
-      const allSubstitutionRequests = leaveRequests.filter(req => req.type === 'substitution');
+      const filteredSubs = allSubstitutionRequests.filter((sub: any) => {
+        const isAccepted = sub.status === 'approved' || (sub.affectedClasses && sub.affectedClasses.some((c: any) => c.substituteStatus === 'accepted'));
+        const isRejected = sub.status === 'rejected' || (sub.affectedClasses && sub.affectedClasses.length > 0 && sub.affectedClasses.every((c: any) => c.substituteStatus === 'rejected'));
+        const isPending = !isAccepted && !isRejected;
+
+        if (subFilterTab === 'accepted' && !isAccepted) return false;
+        if (subFilterTab === 'pending' && !isPending) return false;
+        if (subFilterTab === 'rejected' && !isRejected) return false;
+
+        if (subSearchQuery.trim()) {
+          const q = subSearchQuery.toLowerCase();
+          const matchesTeacher = sub.teacherEmail?.toLowerCase().includes(q);
+          const matchesReason = sub.reason?.toLowerCase().includes(q);
+          const matchesClasses = sub.affectedClasses?.some((c: any) => 
+            c.subject?.toLowerCase().includes(q) || 
+            c.substituteTeacher?.toLowerCase().includes(q)
+          );
+          if (!matchesTeacher && !matchesReason && !matchesClasses) return false;
+        }
+
+        return true;
+      });
+
       return (
         <div className="space-y-6">
-          <div className="flex justify-between items-center mb-4">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Teacher Substitution Requests</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Class delegations and peer substitutions requested by faculty members</p>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🔄</span>
+                <h2 className="text-xl font-bold text-gray-900">Faculty Class Substitutions & Tracking</h2>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Monitor all peer substitutions, class delegations, and track how many substitutions take place across departments.
+              </p>
             </div>
-            <span className="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full">
-              {allSubstitutionRequests.length} Total Substitution Requests
+            <span className="text-xs bg-purple-100 text-purple-800 font-bold px-3 py-1.5 rounded-full border border-purple-200">
+              {allSubstitutionRequests.length} Total Requests Recorded
             </span>
           </div>
 
+          {/* 4 Analytics Summary Metric Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Requested</p>
+                <p className="text-2xl font-black text-gray-900 mt-1">{allSubstitutionRequests.length}</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">Faculty delegation filings</p>
+              </div>
+              <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
+                🔄
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-emerald-100 bg-emerald-50/20 shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Substitutions Taken Place</p>
+                <p className="text-2xl font-black text-emerald-600 mt-1">{acceptedSubs.length}</p>
+                <p className="text-[11px] text-emerald-600/80 mt-0.5">Accepted & active coverage</p>
+              </div>
+              <div className="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold">
+                ✓
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-amber-100 bg-amber-50/20 shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Pending Response</p>
+                <p className="text-2xl font-black text-amber-600 mt-1">{pendingSubs.length}</p>
+                <p className="text-[11px] text-amber-600/80 mt-0.5">Awaiting peer confirmation</p>
+              </div>
+              <div className="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold">
+                ⏳
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-purple-100 bg-purple-50/20 shadow-xs flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Class Slots Covered</p>
+                <p className="text-2xl font-black text-purple-600 mt-1">{totalSubstitutedClasses}</p>
+                <p className="text-[11px] text-purple-600/80 mt-0.5">Teaching hours adjusted</p>
+              </div>
+              <div className="w-11 h-11 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl font-bold">
+                🏫
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Filters & Search Controls */}
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-xs flex flex-col md:flex-row justify-between items-center gap-3">
+            <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+              <button
+                onClick={() => setSubFilterTab('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  subFilterTab === 'all'
+                    ? 'bg-purple-600 text-white shadow-xs'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                All ({allSubstitutionRequests.length})
+              </button>
+              <button
+                onClick={() => setSubFilterTab('accepted')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  subFilterTab === 'accepted'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                }`}
+              >
+                ✓ Took Place / Accepted ({acceptedSubs.length})
+              </button>
+              <button
+                onClick={() => setSubFilterTab('pending')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  subFilterTab === 'pending'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                }`}
+              >
+                ⏳ Pending ({pendingSubs.length})
+              </button>
+              <button
+                onClick={() => setSubFilterTab('rejected')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  subFilterTab === 'rejected'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'bg-red-50 text-red-700 hover:bg-red-100'
+                }`}
+              >
+                ✕ Declined ({rejectedSubs.length})
+              </button>
+            </div>
+
+            <div className="relative w-full md:w-72">
+              <input
+                type="text"
+                value={subSearchQuery}
+                onChange={(e) => setSubSearchQuery(e.target.value)}
+                placeholder="Search teacher, substitute, or subject..."
+                className="w-full pl-8 pr-8 py-1.5 text-xs rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50/50"
+              />
+              <span className="absolute left-2.5 top-2 text-xs text-gray-400">🔍</span>
+              {subSearchQuery && (
+                <button
+                  onClick={() => setSubSearchQuery('')}
+                  className="absolute right-2.5 top-1.5 text-xs text-gray-400 hover:text-gray-600 font-bold"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Substitutions List */}
           <div className="space-y-4">
-            {allSubstitutionRequests.length === 0 ? (
+            {filteredSubs.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                 <p className="text-gray-400 text-4xl mb-2">🔄</p>
-                <h3 className="font-semibold text-gray-700 text-base">No Substitution Requests</h3>
-                <p className="text-gray-500 text-xs mt-1">No faculty members have requested class substitutions at this time.</p>
+                <h3 className="font-semibold text-gray-700 text-base">No Substitution Requests Found</h3>
+                <p className="text-gray-500 text-xs mt-1">
+                  {subSearchQuery ? 'No substitution requests match your search criteria.' : 'No faculty members have requested class substitutions in this category.'}
+                </p>
               </div>
             ) : (
-              allSubstitutionRequests.map((sub: any) => (
-                <div key={sub._id || sub.id} className="p-4 bg-white border rounded-xl shadow-sm space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                          Substitution Request
-                        </span>
-                        <h4 className="font-bold text-gray-900 text-sm">{sub.teacherEmail}</h4>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1"><strong>Reason:</strong> {sub.reason}</p>
-                      <p className="text-xs text-gray-500"><strong>Date:</strong> {formatDate(sub.startDate)}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${
-                        sub.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        sub.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {getStatusText(sub.status)}
-                      </span>
-                      {userType === 'admin' && sub.status !== "approved" && sub.status !== "rejected" && (
-                        <div className="flex gap-1.5 ml-1">
-                          <button 
-                            onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'approve')}
-                            className="px-2.5 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded shadow-xs transition-colors"
-                          >
-                            Approve
-                          </button>
-                          <button 
-                            onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'reject')}
-                            className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded shadow-xs transition-colors"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              filteredSubs.map((sub: any) => {
+                const firstClass = sub.affectedClasses?.[0];
+                const isAccepted = sub.status === 'approved' || (sub.affectedClasses && sub.affectedClasses.some((c: any) => c.substituteStatus === 'accepted'));
+                const isRejected = sub.status === 'rejected' || (sub.affectedClasses && sub.affectedClasses.length > 0 && sub.affectedClasses.every((c: any) => c.substituteStatus === 'rejected'));
 
-                  {sub.affectedClasses && sub.affectedClasses.length > 0 && (
-                    <div className="pl-3 border-l-2 border-blue-500 space-y-2 pt-1">
-                      <h5 className="font-semibold text-xs text-gray-700">Affected Class & Substitute Teacher:</h5>
-                      {sub.affectedClasses.map((cls: any, i: number) => (
-                        <div key={i} className="text-xs bg-gray-50 p-3 rounded-lg border flex justify-between items-center">
-                          <div>
-                            <p className="font-semibold text-gray-800">{cls.subject}</p>
-                            <p className="text-gray-500 mt-0.5">🕒 {cls.time} | 📅 {cls.date || formatDate(sub.startDate)}</p>
-                            <p className="text-blue-600 font-medium mt-0.5">
-                              Covering Substitute: <strong>{cls.substituteTeacher || 'None Assigned'}</strong>
-                            </p>
-                          </div>
-                          <span className={`px-2.5 py-1 rounded text-xs font-bold capitalize ${
-                            cls.substituteStatus === 'accepted' ? 'bg-green-100 text-green-800 border border-green-200' :
-                            cls.substituteStatus === 'rejected' ? 'bg-red-100 text-red-800 border border-red-200' :
-                            cls.substituteStatus === 'assigned' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                            'bg-yellow-100 text-yellow-800 border border-yellow-200'
-                          }`}>
-                            {cls.substituteStatus === 'accepted' ? '✓ Accepted by Substitute' :
-                             cls.substituteStatus === 'rejected' ? '✕ Declined' :
-                             '⏳ Pending Response'}
+                return (
+                  <div key={sub._id || sub.id} className="p-5 bg-white border border-gray-100 rounded-xl shadow-xs hover:shadow-md transition-shadow space-y-3.5">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-gray-100">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
+                            🔄 Substitution Request
                           </span>
+                          <h4 className="font-bold text-gray-900 text-sm">{sub.teacherEmail}</h4>
                         </div>
-                      ))}
+                        <p className="text-xs text-gray-400 mt-1">
+                          Date: <span className="text-gray-600 font-medium">{formatDate(sub.startDate)}</span> • Reason: <span className="text-gray-700 italic font-medium">"{sub.reason}"</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-auto">
+                        <span className={`px-3 py-1 rounded-full text-xs font-extrabold capitalize ${
+                          isAccepted ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                          isRejected ? 'bg-red-100 text-red-800 border border-red-200' :
+                          'bg-amber-100 text-amber-800 border border-amber-200'
+                        }`}>
+                          {isAccepted ? '✓ Took Place (Accepted)' : isRejected ? '✕ Declined' : '⏳ Pending Response'}
+                        </span>
+
+                        {userType === 'admin' && sub.status !== "approved" && sub.status !== "rejected" && (
+                          <div className="flex gap-1.5 ml-2">
+                            <button 
+                              onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'approve')}
+                              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={() => handleLeaveRequestAction(sub._id || sub.id, 'reject')}
+                              className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))
+
+                    {/* Classes Breakdown */}
+                    {sub.affectedClasses && sub.affectedClasses.length > 0 && (
+                      <div className="space-y-2">
+                        <h5 className="font-bold text-xs text-gray-600 uppercase tracking-wider">
+                          Delegated Class & Covering Substitute:
+                        </h5>
+                        {sub.affectedClasses.map((cls: any, i: number) => {
+                          const clsAccepted = cls.substituteStatus === 'accepted';
+                          const clsRejected = cls.substituteStatus === 'rejected';
+
+                          return (
+                            <div key={i} className="text-xs bg-gray-50/70 p-3.5 rounded-lg border border-gray-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-bold text-gray-900 text-sm">{cls.subject}</p>
+                                  <span className="text-[11px] text-gray-500 font-medium">
+                                    🕒 {cls.time} | 📅 {cls.date || formatDate(sub.startDate)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-1.5">
+                                  <span className="text-xs text-gray-500">Covering Faculty:</span>
+                                  <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                                    👨‍🏫 {cls.substituteTeacher || 'None Assigned'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize whitespace-nowrap ${
+                                clsAccepted ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                                clsRejected ? 'bg-red-100 text-red-800 border border-red-200' :
+                                cls.substituteStatus === 'assigned' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                'bg-amber-100 text-amber-800 border border-amber-200'
+                              }`}>
+                                {clsAccepted ? '✓ Substitute Accepted & Covered' :
+                                 clsRejected ? '✕ Substitute Declined' :
+                                 '⏳ Awaiting Substitute Confirmation'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
