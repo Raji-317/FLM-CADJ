@@ -9,6 +9,7 @@ interface WeeklyScheduleViewProps {
 interface ClassSession {
   id: string;
   subject: string;
+  code?: string;
   time: string;
   duration: string;
   room: string;
@@ -20,6 +21,7 @@ interface ClassSession {
   year?: string;
   semester?: string;
   section?: string;
+  incharge?: string;
   isAdjusted?: boolean;
   adjustmentType?: 'substitute' | 'reschedule' | 'room_change';
   originalTeacher?: string;
@@ -30,33 +32,45 @@ interface WeeklySchedule {
   [key: string]: ClassSession[];
 }
 
+// Convert time string to minutes from midnight for sorting
+const timeToMinutes = (timeStr: string = ''): number => {
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return 9999;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === 'PM' && hours !== 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+};
+
 export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: WeeklyScheduleViewProps) => {
   // ✅ User-specified departments: cse, ai, it, ece, eee, mech, civil
   const departments = ['CSE', 'AI', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
   
-  // ✅ User-specified semesters: Sem 1 and Sem 2 (Spring/Fall removed)
+  // ✅ User-specified semesters: Sem 1 and Sem 2
   const semesters = ['Sem 1', 'Sem 2'];
   
   // ✅ 1 to 4 years selector
   const years = ['1', '2', '3', '4'];
   const sections = ['A', 'B'];
 
-  const [selectedDepartment, setSelectedDepartment] = useState('CSE');
-  const [selectedYear, setSelectedYear] = useState('1');
+  const [selectedDepartment, setSelectedDepartment] = useState('AI');
+  const [selectedYear, setSelectedYear] = useState('3');
   const [selectedSemester, setSelectedSemester] = useState('Sem 1');
-  const [selectedBranch, setSelectedBranch] = useState('CSE');
+  const [selectedBranch, setSelectedBranch] = useState('AIDS');
   const [selectedSection, setSelectedSection] = useState('A');
   const [currentWeek, setCurrentWeek] = useState(selectedDate);
 
   // ✅ Branch logic based on user request:
   // - AI department -> branches: AIML and AIDS
-  // - CSE department -> branches: CSE and Cyber Security
+  // - CSE department -> branches: CSE and Cyber Security (cs means cyber security)
   // - Remaining departments -> No branch dropdown
   const hasBranch = selectedDepartment === 'CSE' || selectedDepartment === 'AI';
 
   const branchOptions = useMemo(() => {
     if (selectedDepartment === 'AI') {
-      return ['AIML', 'AIDS'];
+      return ['AIDS', 'AIML'];
     }
     if (selectedDepartment === 'CSE') {
       return ['CSE', 'Cyber Security'];
@@ -64,11 +78,10 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     return [];
   }, [selectedDepartment]);
 
-  // Handle department change and ensure selectedBranch is valid
   const handleDepartmentChange = (newDept: string) => {
     setSelectedDepartment(newDept);
     if (newDept === 'AI') {
-      setSelectedBranch('AIML');
+      setSelectedBranch('AIDS');
     } else if (newDept === 'CSE') {
       setSelectedBranch('CSE');
     } else {
@@ -76,7 +89,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     }
   };
 
-  // ✅ Dynamic curriculum generator for every Department, Branch, Year, Semester & Section
+  // ✅ OFFICIAL UNIVERSITY TIMETABLES AS GIVEN IN IMAGES
   const weeklySchedule: WeeklySchedule = useMemo(() => {
     const dept = selectedDepartment;
     const branch = hasBranch ? selectedBranch : selectedDepartment;
@@ -84,409 +97,456 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     const sem = selectedSemester;
     const sec = selectedSection;
 
-    // Helper to generate realistic subject templates
-    const getSubjectPool = () => {
-      // 1st Year (General Engineering Core)
-      if (yr === '1') {
-        if (sem === 'Sem 1') {
-          return {
-            mon: [
-              { sub: 'Engineering Mathematics-I', time: '09:00 AM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. M. Sailakshmi', type: 'lecture' },
-              { sub: 'Engineering Physics Lab', time: '11:00 AM', dur: '2h', room: 'Lab 101', teacher: 'Dr. Anita Roy', type: 'lab' },
-              { sub: 'Basic Electrical Engg (BEE)', time: '02:00 PM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. Rajesh Kumar', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'C Programming Fundamentals', time: '09:00 AM', dur: '1h 30m', room: 'Room 101', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Engineering Graphics & CAD Lab', time: '11:00 AM', dur: '2h', room: 'CAD Lab 1', teacher: 'Prof. Michael Chen', type: 'lab' },
-              { sub: 'Professional Communication', time: '02:00 PM', dur: '1h', room: 'Room 101', teacher: 'Prof. Jane Smith', type: 'tutorial' }
-            ],
-            wed: [
-              { sub: 'Basic Electrical Engg Lab', time: '09:00 AM', dur: '2h', room: 'Lab 201', teacher: 'Dr. Rajesh Kumar', type: 'lab' },
-              { sub: 'Engineering Mathematics-I', time: '11:00 AM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. M. Sailakshmi', type: 'lecture' },
-              { sub: 'Engineering Physics', time: '02:00 PM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. Anita Roy', type: 'lecture' }
-            ],
-            thu: [
-              { sub: 'C Programming Lab', time: '10:00 AM', dur: '2h', room: 'Lab 301', teacher: 'Prof. Sarah Johnson', type: 'lab' },
-              { sub: 'Environmental Science', time: '02:00 PM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. Lisa Anderson', type: 'lecture' }
-            ],
-            fri: [
-              { sub: 'Engineering Physics', time: '09:00 AM', dur: '1h 30m', room: 'Room 101', teacher: 'Dr. Anita Roy', type: 'lecture' },
-              { sub: 'Math-I Problem Solving Tutorial', time: '11:00 AM', dur: '1h', room: 'Room 101', teacher: 'Dr. M. Sailakshmi', type: 'tutorial' },
-              { sub: 'Workshop Practice Lab', time: '02:00 PM', dur: '2h', room: 'Workshop A', teacher: 'Prof. James Wilson', type: 'lab' }
-            ],
-            sat: [
-              { sub: 'Engineering Induction & Coding Mentoring', time: '10:00 AM', dur: '2h', room: 'Auditorium A', teacher: 'Faculty Core Team', type: 'lecture' }
-            ]
-          };
-        } else {
-          return {
-            mon: [
-              { sub: 'Engineering Mathematics-II', time: '09:00 AM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. M. Sailakshmi', type: 'lecture' },
-              { sub: 'Python Programming Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Basic Electronics Engineering', time: '02:00 PM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. Rajesh Kumar', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'Data Structures Foundation', time: '09:00 AM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. V. Harinadh', type: 'lecture' },
-              { sub: 'Applied Chemistry Lab', time: '11:00 AM', dur: '2h', room: 'Lab 103', teacher: 'Dr. Emily Davis', type: 'lab' },
-              { sub: 'Engineering Mathematics-II', time: '02:00 PM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. M. Sailakshmi', type: 'lecture' }
-            ],
-            wed: [
-              { sub: 'Data Structures Foundation Lab', time: '09:00 AM', dur: '2h', room: 'Lab 301', teacher: 'Dr. V. Harinadh', type: 'lab' },
-              { sub: 'Applied Chemistry', time: '11:00 AM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. Emily Davis', type: 'lecture' },
-              { sub: 'Basic Electronics Lab', time: '02:00 PM', dur: '2h', room: 'Lab 202', teacher: 'Dr. Rajesh Kumar', type: 'lab' }
-            ],
-            thu: [
-              { sub: 'Python Programming', time: '10:00 AM', dur: '1h 30m', room: 'Room 102', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Universal Human Values & Ethics', time: '02:00 PM', dur: '1h 30m', room: 'Room 102', teacher: 'Prof. Jane Smith', type: 'lecture' }
-            ],
-            fri: [
-              { sub: 'Basic Electronics', time: '09:00 AM', dur: '1h 30m', room: 'Room 102', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-              { sub: 'Python Mini-Project Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Math-II Doubt Clearing Tutorial', time: '02:00 PM', dur: '1h', room: 'Room 102', teacher: 'Dr. M. Sailakshmi', type: 'tutorial' }
-            ],
-            sat: [
-              { sub: 'Freshman Project Exhibition & Tech Talk', time: '10:00 AM', dur: '2h', room: 'Auditorium B', teacher: 'Faculty Core Team', type: 'lab' }
-            ]
-          };
-        }
-      }
+    // -------------------------------------------------------------
+    // 1. AIDS 3RD YEAR 1ST SEM (CLASS: CSE(AI&DS)-A, ROOM: C-303)
+    // As per Image 1 & Image 2
+    // -------------------------------------------------------------
+    if (dept === 'AI' && branch === 'AIDS' && yr === '3' && sem === 'Sem 1') {
+      const roomNo = 'C-303';
+      const incharge = 'Mrs. K. Swetha';
 
-      // Department & Branch Specific Curriculums (Years 2, 3, 4)
-      if (dept === 'CSE') {
-        if (branch === 'Cyber Security') {
-          return {
-            mon: [
-              { sub: 'Fundamentals of Cyber Security', time: '09:00 AM', dur: '1h 30m', room: 'Room 205', teacher: 'Prof. Michael Chen', type: 'lecture' },
-              { sub: 'Linux Internals & Security Lab', time: '11:00 AM', dur: '2h', room: 'Lab 304', teacher: 'Dr. Emily Davis', type: 'lab' },
-              { sub: 'Computer Networks', time: '02:00 PM', dur: '1h 30m', room: 'Room 205', teacher: 'Prof. Sarah Johnson', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'Applied Cryptography Basics', time: '09:00 AM', dur: '1h 30m', room: 'Room 205', teacher: 'Dr. Lisa Anderson', type: 'lecture' },
-              { sub: 'Network Security Protocols Lab', time: '11:00 AM', dur: '2h', room: 'Lab 304', teacher: 'Prof. Michael Chen', type: 'lab' },
-              { sub: 'OS Architecture & Hardening', time: '02:00 PM', dur: '1h 30m', room: 'Room 205', teacher: 'Dr. Robert Wilson', type: 'lecture' }
-            ],
-            wed: [
-              { sub: 'Ethical Hacking & Vulnerability Analysis', time: '09:00 AM', dur: '1h 30m', room: 'Room 205', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Cyber Defense Operations Lab', time: '11:00 AM', dur: '2h', room: 'Lab 304', teacher: 'Prof. Michael Chen', type: 'lab' },
-              { sub: 'Database Security & Access Control', time: '02:00 PM', dur: '1h 30m', room: 'Room 205', teacher: 'Dr. A. Sri Krishna', type: 'lecture' }
-            ],
-            thu: [
-              { sub: 'Malware Analysis & Forensics', time: '10:00 AM', dur: '1h 30m', room: 'Room 205', teacher: 'Dr. Lisa Anderson', type: 'lecture' },
-              { sub: 'Secure Coding in C/C++ Lab', time: '01:00 PM', dur: '2h', room: 'Lab 304', teacher: 'Dr. Emily Davis', type: 'lab' }
-            ],
-            fri: [
-              { sub: 'Cloud & Infrastructure Security', time: '09:00 AM', dur: '1h 30m', room: 'Room 205', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Penetration Testing Hands-on Lab', time: '11:00 AM', dur: '2h', room: 'Lab 304', teacher: 'Prof. Michael Chen', type: 'lab' },
-              { sub: 'Cyber Laws & Incident Response', time: '02:00 PM', dur: '1h', room: 'Room 205', teacher: 'Dr. Robert Wilson', type: 'tutorial' }
-            ],
-            sat: [
-              { sub: 'Capture The Flag (CTF) Coaching', time: '10:00 AM', dur: '2h', room: 'Lab 304', teacher: 'Prof. Michael Chen', type: 'lab' }
-            ]
-          };
-        } else {
-          // Standard CSE
-          return {
-            mon: [
-              { sub: 'Data Structures & Algorithms', time: '09:00 AM', dur: '1h 30m', room: 'Room 204', teacher: 'Dr. V. Harinadh', type: 'lecture' },
-              { sub: 'Algorithm Design Lab', time: '11:00 AM', dur: '2h', room: 'Lab 301', teacher: 'Dr. V. Harinadh', type: 'lab' },
-              { sub: 'Database Systems (DBMS)', time: '02:00 PM', dur: '1h 30m', room: 'Room 105', teacher: 'Dr. A. Sri Krishna', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'Software Engineering & Design', time: '09:00 AM', dur: '1h 30m', room: 'Room 201', teacher: 'Prof. Pravallika Prathikonda', type: 'lecture' },
-              { sub: 'DBMS & SQL Hands-on Lab', time: '11:00 AM', dur: '2h', room: 'Lab 303', teacher: 'Dr. A. Sri Krishna', type: 'lab' },
-              { sub: 'Operating Systems & Concurrency', time: '02:00 PM', dur: '1h 30m', room: 'Room 204', teacher: 'Prof. Michael Chen', type: 'lecture' }
-            ],
-            wed: [
-              { sub: 'Computer Networks & Protocols', time: '09:00 AM', dur: '1h 30m', room: 'Room 204', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Web Fullstack Engineering Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pravallika Prathikonda', type: 'lab' },
-              { sub: 'Theory of Computation', time: '02:00 PM', dur: '1h 30m', room: 'Room 204', teacher: 'Dr. V. Harinadh', type: 'lecture' }
-            ],
-            thu: [
-              { sub: 'Cloud Infrastructure & DevOps', time: '10:00 AM', dur: '1h 30m', room: 'Room 105', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Operating Systems System Lab', time: '01:00 PM', dur: '2h', room: 'Lab 301', teacher: 'Prof. Michael Chen', type: 'lab' },
-              { sub: 'Compiler Design Tutorial', time: '03:00 PM', dur: '1h', room: 'Room 204', teacher: 'Dr. V. Harinadh', type: 'tutorial' }
-            ],
-            fri: [
-              { sub: 'Cyber Defense & Network Security', time: '09:00 AM', dur: '1h 30m', room: 'Room 204', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-              { sub: 'Computer Networks Simulation Lab', time: '11:00 AM', dur: '2h', room: 'Lab 301', teacher: 'Prof. Sarah Johnson', type: 'lab' },
-              { sub: 'Agile Software Project Review', time: '02:00 PM', dur: '2h', room: 'Room 201', teacher: 'Prof. Pravallika Prathikonda', type: 'tutorial' }
-            ],
-            sat: [
-              { sub: 'Industry Tech Talk & Hackathon', time: '10:00 AM', dur: '2h', room: 'Auditorium A', teacher: 'Dr. V. Harinadh', type: 'lecture' },
-              { sub: 'Capstone Project Evaluation', time: '01:00 PM', dur: '2h', room: 'Lab 301', teacher: 'Prof. Sarah Johnson', type: 'lab' }
-            ]
-          };
-        }
-      }
-
-      if (dept === 'AI') {
-        if (branch === 'AIDS') {
-          return {
-            mon: [
-              { sub: 'Data Science & Statistical Analysis', time: '09:00 AM', dur: '1h 30m', room: 'Room 303', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Exploratory Data Analysis (EDA) Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Big Data Storage Systems', time: '02:00 PM', dur: '1h 30m', room: 'Room 303', teacher: 'Dr. A. Sri Krishna', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'Predictive Modeling & Inference', time: '09:00 AM', dur: '1h 30m', room: 'Room 303', teacher: 'Dr. M. Sailakshmi', type: 'lecture' },
-              { sub: 'Data Visualization & Tableau Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Database Query Optimization', time: '02:00 PM', dur: '1h 30m', room: 'Room 303', teacher: 'Dr. A. Sri Krishna', type: 'lecture' }
-            ],
-            wed: [
-              { sub: 'Machine Learning for Data Science', time: '09:00 AM', dur: '1h 30m', room: 'Room 303', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Big Data Processing Lab (Hadoop/Spark)', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Dr. A. Sri Krishna', type: 'lab' },
-              { sub: 'Cloud Data Warehousing', time: '02:00 PM', dur: '1h 30m', room: 'Room 303', teacher: 'Prof. Sarah Johnson', type: 'lecture' }
-            ],
-            thu: [
-              { sub: 'Natural Language Data Mining', time: '10:00 AM', dur: '1h 30m', room: 'Room 303', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Predictive Analytics Lab', time: '01:00 PM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' }
-            ],
-            fri: [
-              { sub: 'Applied Deep Learning for Analytics', time: '09:00 AM', dur: '1h 30m', room: 'Room 303', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Business Analytics Showcase Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Data Ethics & Governance', time: '02:00 PM', dur: '1h', room: 'Room 303', teacher: 'Dr. Lisa Anderson', type: 'tutorial' }
-            ],
-            sat: [
-              { sub: 'Data Science & GenAI Masterclass', time: '10:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' }
-            ]
-          };
-        } else {
-          // Standard AIML
-          return {
-            mon: [
-              { sub: 'Machine Learning Fundamentals', time: '09:00 AM', dur: '1h 30m', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Artificial Intelligence Lab (PyTorch)', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Mathematics for Machine Learning', time: '02:00 PM', dur: '1h 30m', room: 'Room 301', teacher: 'Dr. M. Sailakshmi', type: 'lecture' }
-            ],
-            tue: [
-              { sub: 'Deep Learning & Neural Networks', time: '09:00 AM', dur: '1h 30m', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'TensorFlow & Keras Implementation Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Optimization Techniques for AI', time: '02:00 PM', dur: '1h 30m', room: 'Room 301', teacher: 'Dr. M. Sailakshmi', type: 'lecture' }
-            ],
-            wed: [
-              { sub: 'Natural Language Processing (NLP)', time: '09:00 AM', dur: '1h 30m', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'NLP & Text Analytics Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' },
-              { sub: 'Knowledge Representation & Logic', time: '02:00 PM', dur: '1h 30m', room: 'Room 301', teacher: 'Dr. V. Harinadh', type: 'lecture' }
-            ],
-            thu: [
-              { sub: 'Computer Vision Architectures', time: '10:00 AM', dur: '1h 30m', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'Computer Vision OpenCV Lab', time: '01:00 PM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' }
-            ],
-            fri: [
-              { sub: 'Reinforcement Learning & Robotics', time: '09:00 AM', dur: '1h 30m', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
-              { sub: 'AI Models Cloud Deployment Lab', time: '11:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Sarah Johnson', type: 'lab' },
-              { sub: 'AI Ethics & Alignment Seminar', time: '02:00 PM', dur: '1h', room: 'Room 301', teacher: 'Prof. Pradeep Juluri', type: 'tutorial' }
-            ],
-            sat: [
-              { sub: 'Generative AI & LLMs Hands-on Workshop', time: '10:00 AM', dur: '2h', room: 'Lab 302', teacher: 'Prof. Pradeep Juluri', type: 'lab' }
-            ]
-          };
-        }
-      }
-
-      if (dept === 'IT') {
-        return {
-          mon: [
-            { sub: 'Web Technologies & Frameworks', time: '09:00 AM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-            { sub: 'Full Stack Web Development Lab', time: '11:00 AM', dur: '2h', room: 'Lab 303', teacher: 'Prof. Pravallika Prathikonda', type: 'lab' },
-            { sub: 'Object Oriented Software Design', time: '02:00 PM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Pravallika Prathikonda', type: 'lecture' }
-          ],
-          tue: [
-            { sub: 'Cloud Computing & Virtualization', time: '09:00 AM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-            { sub: 'Database Administration Lab', time: '11:00 AM', dur: '2h', room: 'Lab 303', teacher: 'Dr. A. Sri Krishna', type: 'lab' },
-            { sub: 'Information Security & Privacy', time: '02:00 PM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Michael Chen', type: 'lecture' }
-          ],
-          wed: [
-            { sub: 'Computer Networks & Administration', time: '09:00 AM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Sarah Johnson', type: 'lecture' },
-            { sub: 'Cloud DevOps CI/CD Lab', time: '11:00 AM', dur: '2h', room: 'Lab 301', teacher: 'Prof. Sarah Johnson', type: 'lab' },
-            { sub: 'Mobile Application Development', time: '02:00 PM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Pravallika Prathikonda', type: 'lecture' }
-          ],
-          thu: [
-            { sub: 'Enterprise System Architecture', time: '10:00 AM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Michael Chen', type: 'lecture' },
-            { sub: 'Mobile App Development Lab', time: '01:00 PM', dur: '2h', room: 'Lab 303', teacher: 'Prof. Pravallika Prathikonda', type: 'lab' }
-          ],
-          fri: [
-            { sub: 'Software Testing & Automation', time: '09:00 AM', dur: '1h 30m', room: 'Room 202', teacher: 'Prof. Pravallika Prathikonda', type: 'lecture' },
-            { sub: 'Automated Testing Lab', time: '11:00 AM', dur: '2h', room: 'Lab 303', teacher: 'Prof. Pravallika Prathikonda', type: 'lab' },
-            { sub: 'IT Project Management Review', time: '02:00 PM', dur: '1h', room: 'Room 202', teacher: 'Prof. Sarah Johnson', type: 'tutorial' }
-          ],
-          sat: [
-            { sub: 'Cloud & Fullstack Project Mentoring', time: '10:00 AM', dur: '2h', room: 'Lab 303', teacher: 'Prof. Sarah Johnson', type: 'lab' }
-          ]
-        };
-      }
-
-      if (dept === 'ECE') {
-        return {
-          mon: [
-            { sub: 'Electronic Devices & Circuits', time: '09:00 AM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Microprocessors & Controllers Lab', time: '11:00 AM', dur: '2h', room: 'Lab 201', teacher: 'Dr. Rajesh Kumar', type: 'lab' },
-            { sub: 'Signals & Linear Systems', time: '02:00 PM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' }
-          ],
-          tue: [
-            { sub: 'Analog & Digital Communication', time: '09:00 AM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Digital System Design Lab (Verilog)', time: '11:00 AM', dur: '2h', room: 'Lab 201', teacher: 'Dr. Rajesh Kumar', type: 'lab' },
-            { sub: 'Electromagnetic Field Theory', time: '02:00 PM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Anita Roy', type: 'lecture' }
-          ],
-          wed: [
-            { sub: 'VLSI Design & CMOS Circuits', time: '09:00 AM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Communication Engineering Lab', time: '11:00 AM', dur: '2h', room: 'Lab 202', teacher: 'Dr. Rajesh Kumar', type: 'lab' },
-            { sub: 'Digital Signal Processing (DSP)', time: '02:00 PM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. M. Sailakshmi', type: 'lecture' }
-          ],
-          thu: [
-            { sub: 'Wireless Sensor Networks & IoT', time: '10:00 AM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'DSP Algorithms MATLAB Lab', time: '01:00 PM', dur: '2h', room: 'Lab 202', teacher: 'Dr. M. Sailakshmi', type: 'lab' }
-          ],
-          fri: [
-            { sub: 'Embedded Systems & Real-Time OS', time: '09:00 AM', dur: '1h 30m', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Embedded Systems Hardware Lab', time: '11:00 AM', dur: '2h', room: 'Lab 201', teacher: 'Dr. Rajesh Kumar', type: 'lab' },
-            { sub: 'Antenna & Wave Propagation Tutorial', time: '02:00 PM', dur: '1h', room: 'Room 106', teacher: 'Dr. Rajesh Kumar', type: 'tutorial' }
-          ],
-          sat: [
-            { sub: 'Robotics & Hardware Prototyping Workshop', time: '10:00 AM', dur: '2h', room: 'Lab 201', teacher: 'Dr. Rajesh Kumar', type: 'lab' }
-          ]
-        };
-      }
-
-      if (dept === 'EEE') {
-        return {
-          mon: [
-            { sub: 'Electrical Circuit Analysis', time: '09:00 AM', dur: '1h 30m', room: 'Room 108', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Electrical Machines-I Lab', time: '11:00 AM', dur: '2h', room: 'Machines Lab', teacher: 'Faculty EEE', type: 'lab' },
-            { sub: 'DC Machines & Transformers', time: '02:00 PM', dur: '1h 30m', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' }
-          ],
-          tue: [
-            { sub: 'Power Electronics & Drives', time: '09:00 AM', dur: '1h 30m', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' },
-            { sub: 'Power Electronics Simulation Lab', time: '11:00 AM', dur: '2h', room: 'Lab 202', teacher: 'Faculty EEE', type: 'lab' },
-            { sub: 'Control Systems Engineering', time: '02:00 PM', dur: '1h 30m', room: 'Room 108', teacher: 'Dr. M. Sailakshmi', type: 'lecture' }
-          ],
-          wed: [
-            { sub: 'Power Systems Transmission & Dist.', time: '09:00 AM', dur: '1h 30m', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' },
-            { sub: 'Control Systems MATLAB Lab', time: '11:00 AM', dur: '2h', room: 'Lab 202', teacher: 'Dr. M. Sailakshmi', type: 'lab' },
-            { sub: 'Renewable Energy Technologies', time: '02:00 PM', dur: '1h 30m', room: 'Room 108', teacher: 'Dr. Anita Roy', type: 'lecture' }
-          ],
-          thu: [
-            { sub: 'Smart Grid & Electric Vehicles', time: '10:00 AM', dur: '1h 30m', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' },
-            { sub: 'Measurements & Instrumentation Lab', time: '01:00 PM', dur: '2h', room: 'Machines Lab', teacher: 'Faculty EEE', type: 'lab' }
-          ],
-          fri: [
-            { sub: 'Power System Protection & Switchgear', time: '09:00 AM', dur: '1h 30m', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' },
-            { sub: 'High Voltage & Protection Lab', time: '11:00 AM', dur: '2h', room: 'Machines Lab', teacher: 'Faculty EEE', type: 'lab' },
-            { sub: 'Electrical Network Synthesis Tutorial', time: '02:00 PM', dur: '1h', room: 'Room 108', teacher: 'Faculty EEE', type: 'tutorial' }
-          ],
-          sat: [
-            { sub: 'EV Powertrain & Smart Energy Seminar', time: '10:00 AM', dur: '2h', room: 'Room 108', teacher: 'Faculty EEE', type: 'lecture' }
-          ]
-        };
-      }
-
-      if (dept === 'MECH') {
-        return {
-          mon: [
-            { sub: 'Engineering Thermodynamics', time: '09:00 AM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' },
-            { sub: 'Fluid Mechanics & Machinery Lab', time: '11:00 AM', dur: '2h', room: 'Mech Lab 1', teacher: 'Faculty MECH', type: 'lab' },
-            { sub: 'Manufacturing Technology-I', time: '02:00 PM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' }
-          ],
-          tue: [
-            { sub: 'Kinematics & Dynamics of Machinery', time: '09:00 AM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' },
-            { sub: 'CAD/CAM SolidWorks Lab', time: '11:00 AM', dur: '2h', room: 'CAD Lab 2', teacher: 'Faculty MECH', type: 'lab' },
-            { sub: 'Strength of Materials', time: '02:00 PM', dur: '1h 30m', room: 'Room 110', teacher: 'Dr. Anita Roy', type: 'lecture' }
-          ],
-          wed: [
-            { sub: 'Heat & Mass Transfer', time: '09:00 AM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' },
-            { sub: 'Thermal Engineering & IC Engines Lab', time: '11:00 AM', dur: '2h', room: 'Thermal Lab', teacher: 'Faculty MECH', type: 'lab' },
-            { sub: 'Design of Machine Elements', time: '02:00 PM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' }
-          ],
-          thu: [
-            { sub: 'Automobile Engineering', time: '10:00 AM', dur: '1h 30m', room: 'Room 110', teacher: 'Faculty MECH', type: 'lecture' },
-            { sub: 'Manufacturing Technology Machine Shop', time: '01:00 PM', dur: '2h', room: 'Workshop B', teacher: 'Faculty MECH', type: 'lab' }
-          ],
-          fri: [
-            { sub: 'Robotics & Industrial Automation', time: '09:00 AM', dur: '1h 30m', room: 'Room 110', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
-            { sub: 'Finite Element Analysis (FEA) Lab', time: '11:00 AM', dur: '2h', room: 'CAD Lab 2', teacher: 'Faculty MECH', type: 'lab' },
-            { sub: 'Mechanisms Analysis Tutorial', time: '02:00 PM', dur: '1h', room: 'Room 110', teacher: 'Faculty MECH', type: 'tutorial' }
-          ],
-          sat: [
-            { sub: 'Additive Manufacturing & 3D Printing Expo', time: '10:00 AM', dur: '2h', room: 'Workshop B', teacher: 'Faculty MECH', type: 'lab' }
-          ]
-        };
-      }
-
-      // Default CIVIL
       return {
-        mon: [
-          { sub: 'Surveying & Geomatics', time: '09:00 AM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' },
-          { sub: 'Surveying Field Practical Lab', time: '11:00 AM', dur: '2h', room: 'Survey Yard', teacher: 'Faculty CIVIL', type: 'lab' },
-          { sub: 'Building Materials & Construction', time: '02:00 PM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' }
+        Monday: [
+          { id: 'aids-3-mon-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-2', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-3', subject: 'UID using Flutter', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-4', subject: 'RES (Renewable Energy Sources)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-5', subject: 'CN (Computer Networks)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-6', subject: 'AI (Artificial Intelligence)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-mon-7', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
-        tue: [
-          { sub: 'Strength of Materials & Mechanics', time: '09:00 AM', dur: '1h 30m', room: 'Room 112', teacher: 'Dr. Anita Roy', type: 'lecture' },
-          { sub: 'Material Testing Concrete Lab', time: '11:00 AM', dur: '2h', room: 'Concrete Lab', teacher: 'Faculty CIVIL', type: 'lab' },
-          { sub: 'Fluid Mechanics in Channels', time: '02:00 PM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' }
+        Tuesday: [
+          { id: 'aids-3-tue-1', subject: 'CN (Computer Networks)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-tue-2', subject: 'AI (Artificial Intelligence)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-tue-3', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-tue-4', subject: 'COA (Computer Organization and Architecture)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-tue-5', subject: 'FSD-2 LAB (Full Stack Development-2 Lab)', time: '01:00 PM', duration: '2h 30m', room: 'Lab 301', teacher: 'Mr. Mohammad Towqeer UL Haq & Mr. MP. Praveen Kumar', students: 45, type: 'lab', department: dept, branch, incharge }
         ],
-        wed: [
-          { sub: 'Structural Analysis-I', time: '09:00 AM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' },
-          { sub: 'Hydraulics & Fluid Machinery Lab', time: '11:00 AM', dur: '2h', room: 'Hydraulics Lab', teacher: 'Faculty CIVIL', type: 'lab' },
-          { sub: 'Geotechnical Engineering', time: '02:00 PM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' }
+        Wednesday: [
+          { id: 'aids-3-wed-1', subject: 'FSD-2 (Full Stack Development-2)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-wed-2', subject: 'AI LAB / CN LAB (Artificial Intelligence & CN Lab)', time: '08:50 AM', duration: '2h 50m', room: 'Lab 302', teacher: 'Dr. P. Sri Charani & Mrs. M. Bhargavi', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aids-3-wed-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-wed-6', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-wed-7', subject: 'COA (Computer Organization and Architecture)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
-        thu: [
-          { sub: 'Transportation & Highway Engg', time: '10:00 AM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' },
-          { sub: 'AutoCAD Civil Drafting Lab', time: '01:00 PM', dur: '2h', room: 'CAD Lab 1', teacher: 'Faculty CIVIL', type: 'lab' }
+        Thursday: [
+          { id: 'aids-3-thu-1', subject: 'RES (Renewable Energy Sources)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-thu-2', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-thu-3', subject: 'UID using Flutter LAB (Tinkering Lab)', time: '10:00 AM', duration: '1h 40m', room: 'Lab 303', teacher: 'Mr. K. Rajasekhar & Mr. D. Anand', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aids-3-thu-5', subject: 'AI (Artificial Intelligence)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-thu-6', subject: 'COA (Computer Organization and Architecture)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-thu-7', subject: 'CN (Computer Networks)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
-        fri: [
-          { sub: 'Environmental Engineering & Sanitation', time: '09:00 AM', dur: '1h 30m', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'lecture' },
-          { sub: 'Soil Mechanics & Geotech Lab', time: '11:00 AM', dur: '2h', room: 'Soil Lab', teacher: 'Faculty CIVIL', type: 'lab' },
-          { sub: 'Structural Steel Design Tutorial', time: '02:00 PM', dur: '1h', room: 'Room 112', teacher: 'Faculty CIVIL', type: 'tutorial' }
+        Friday: [
+          { id: 'aids-3-fri-1', subject: 'AI (Artificial Intelligence)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-fri-2', subject: 'RES (Renewable Energy Sources)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-fri-3', subject: 'CN (Computer Networks)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-fri-4', subject: 'LIB (Library & Self Study)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aids-3-fri-5', subject: 'UID using Flutter', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-fri-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-fri-7', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
-        sat: [
-          { sub: 'Total Station & GIS Mapping Workshop', time: '10:00 AM', dur: '2h', room: 'Survey Yard', teacher: 'Faculty CIVIL', type: 'lab' }
-        ]
+        Saturday: [
+          { id: 'aids-3-sat-1', subject: 'COA (Computer Organization and Architecture)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-sat-2', subject: 'AI (Artificial Intelligence)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-sat-3', subject: 'CN (Computer Networks)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aids-3-sat-4', subject: 'COUN (Counselling & Mentorship)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aids-3-sat-5', subject: 'CN LAB / AI LAB (Batch Evaluation Lab)', time: '01:00 PM', duration: '2h 30m', room: 'Lab 302', teacher: 'Mrs. M. Bhargavi & Dr. P. Sri Charani', students: 45, type: 'lab', department: dept, branch, incharge }
+        ],
+        Sunday: []
       };
+    }
+
+    // -------------------------------------------------------------
+    // 2. AIML 3RD YEAR 1ST SEM (CLASS: CSE(AIML)-B & A)
+    // As requested: "aiml b third year"
+    // -------------------------------------------------------------
+    if (dept === 'AI' && branch === 'AIML' && yr === '3' && sem === 'Sem 1') {
+      const roomNo = sec === 'B' ? 'C-302' : 'C-301';
+      const incharge = sec === 'B' ? 'Dr. P. Sri Charani' : 'Mrs. M. Bhargavi';
+
+      return {
+        Monday: [
+          { id: 'aiml-3-mon-1', subject: 'AI (Artificial Intelligence)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-2', subject: 'CN (Computer Networks)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-3', subject: 'FSD-2 (Full Stack Development-2)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-4', subject: 'COA (Computer Organization and Architecture)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-6', subject: 'AI LAB (Artificial Intelligence Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab 302', teacher: 'Dr. P. Sri Charani & Ms. R.D. Priyanka', students: 45, type: 'lab', department: dept, branch, incharge }
+        ],
+        Tuesday: [
+          { id: 'aiml-3-tue-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-2', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-3', subject: 'AI (Artificial Intelligence)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-4', subject: 'CN (Computer Networks)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-5', subject: 'UID using Flutter', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-6', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-7', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Wednesday: [
+          { id: 'aiml-3-wed-1', subject: 'RES (Renewable Energy Sources)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-2', subject: 'FSD-2 LAB (Full Stack Development-2 Lab)', time: '08:50 AM', duration: '2h 50m', room: 'Lab 301', teacher: 'Mr. Mohammad Towqeer UL Haq & Mr. MP. Praveen Kumar', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-5', subject: 'COA (Computer Organization and Architecture)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-6', subject: 'CN (Computer Networks)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-7', subject: 'AI (Artificial Intelligence)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Thursday: [
+          { id: 'aiml-3-thu-1', subject: 'CN (Computer Networks)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-2', subject: 'AI (Artificial Intelligence)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-3', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-4', subject: 'RES (Renewable Energy Sources)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-5', subject: 'UID using Flutter LAB (Tinkering Lab)', time: '01:00 PM', duration: '1h 40m', room: 'Lab 303', teacher: 'Mr. K. Rajasekhar & Mr. D. Anand', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-7', subject: 'COA (Computer Organization and Architecture)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Friday: [
+          { id: 'aiml-3-fri-1', subject: 'COA (Computer Organization and Architecture)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-2', subject: 'UID using Flutter', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-3', subject: 'RES (Renewable Energy Sources)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-4', subject: 'CN (Computer Networks)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-5', subject: 'FSD-2 (Full Stack Development-2)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-7', subject: 'LIB (Library & Self Study)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+        ],
+        Saturday: [
+          { id: 'aiml-3-sat-1', subject: 'FSD-2 (Full Stack Development-2)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-2', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-3', subject: 'CN LAB / AI LAB (Hands-on Practice Lab)', time: '10:00 AM', duration: '1h 40m', room: 'Lab 302', teacher: 'Mrs. M. Bhargavi & Dr. P. Sri Charani', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-5', subject: 'COUN (Counselling & Mentoring)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-6', subject: 'AI (Artificial Intelligence)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-7', subject: 'EDA (Exploratory Data Analysis using Python)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Sunday: []
+      };
+    }
+
+    // -------------------------------------------------------------
+    // 3. CSE CYBER SECURITY 4TH YEAR 1ST SEM (CLASS: CSE-CS, ROOM: B-204)
+    // As per Image 3 ("cs means cyber security")
+    // -------------------------------------------------------------
+    if (dept === 'CSE' && branch === 'Cyber Security' && yr === '4' && sem === 'Sem 1') {
+      const roomNo = 'B-204';
+      const incharge = 'Mr. Ch. Venkata Ramana';
+
+      return {
+        Monday: [
+          { id: 'cs-4-mon-1', subject: 'ES (Embedded Systems)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-mon-2', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-mon-3', subject: 'VLSI (Fundamentals of VLSI Design)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-mon-4', subject: 'DT (Domain Training: Moocs / SWAYAM / NPTEL)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-mon-5', subject: 'BCT (Block Chain Technology)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. G. Surendra', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-mon-6', subject: 'DL (Deep Learning)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-mon-7', subject: 'HRM (Human Resources Management)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Tuesday: [
+          { id: 'cs-4-tue-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-tue-1', subject: 'BCT (Block Chain Technology)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. G. Surendra', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-2', subject: 'ES (Embedded Systems)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-3', subject: 'DL (Deep Learning)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-4', subject: 'VLSI (Fundamentals of VLSI Design)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-5', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-6', subject: 'EH (Ethical Hacking)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. M. Prasad', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-tue-7', subject: 'HRM (Human Resources Management)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Wednesday: [
+          { id: 'cs-4-wed-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-wed-1', subject: 'DL (Deep Learning)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-wed-2', subject: 'HRM (Human Resources Management)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-wed-3', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-wed-4', subject: 'VLSI (Fundamentals of VLSI Design)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-wed-5', subject: 'ES (Embedded Systems)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-wed-6', subject: 'DT (Domain Training: Moocs)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-wed-7', subject: 'BCT (Block Chain Technology)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. G. Surendra', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Thursday: [
+          { id: 'cs-4-thu-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-thu-1', subject: 'EH (Ethical Hacking)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. M. Prasad', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-2', subject: 'DL (Deep Learning)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-3', subject: 'BCT (Block Chain Technology)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. G. Surendra', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-4', subject: 'ES (Embedded Systems)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-5', subject: 'HRM (Human Resources Management)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-6', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-thu-7', subject: 'VLSI (Fundamentals of VLSI Design)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Friday: [
+          { id: 'cs-4-fri-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-fri-1', subject: 'VLSI (Fundamentals of VLSI Design)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-fri-2', subject: 'EH LAB (Ethical Hacking Lab [D-310])', time: '09:40 AM', duration: '2h 50m', room: 'Lab D-310', teacher: 'Dr. M. Prasad & Mrs. K. Soni Sharmila', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'cs-4-fri-5', subject: 'DL (Deep Learning)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-fri-6', subject: 'COI (Constitution of India)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-fri-7', subject: 'LIB (Library & Technical Reading)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+        ],
+        Saturday: [
+          { id: 'cs-4-sat-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-sat-1', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-sat-2', subject: 'DT (Domain Training: Moocs)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-sat-3', subject: 'HRM (Human Resources Management)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-sat-4', subject: 'COUN (Counselling & Career Guidance)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cs-4-sat-5', subject: 'COI (Constitution of India)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-sat-6', subject: 'BCT (Block Chain Technology)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. G. Surendra', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cs-4-sat-7', subject: 'ES (Embedded Systems)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Sunday: []
+      };
+    }
+
+    // -------------------------------------------------------------
+    // 4. CSE 4TH YEAR 1ST SEM - SECTION B (CLASS: CSE-B, ROOM: D-303)
+    // As per Image 5
+    // -------------------------------------------------------------
+    if (dept === 'CSE' && (branch === 'CSE' || !hasBranch) && yr === '4' && sem === 'Sem 1' && sec === 'B') {
+      const roomNo = 'D-303';
+      const incharge = 'Mrs. G. Sujatha';
+
+      return {
+        Monday: [
+          { id: 'cseb-4-mon-1', subject: 'DL (Deep Learning)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-2', subject: 'HRPM (Human Resources & Project Management)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-3', subject: 'VLSI (Fundamentals of VLSI Design)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. G. Challa Ram', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-4', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-5', subject: 'PE (Prompt Engineering)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. K. Ashok', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-6', subject: 'ES (Embedded Systems)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. D. Murali Krishna', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-mon-7', subject: 'GAI (Generative AI)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Tuesday: [
+          { id: 'cseb-4-tue-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-1', subject: 'ES (Embedded Systems)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. D. Murali Krishna', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-2', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-3', subject: 'HRPM (Human Resources & Project Management)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-4', subject: 'GAI (Generative AI)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-5', subject: 'DL (Deep Learning)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-6', subject: 'DT (Domain Training: Moocs)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-tue-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+        ],
+        Wednesday: [
+          { id: 'cseb-4-wed-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-1', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-2', subject: 'ES (Embedded Systems)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. D. Murali Krishna', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-3', subject: 'VLSI (Fundamentals of VLSI Design)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. G. Challa Ram', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-4', subject: 'DL (Deep Learning)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-5', subject: 'HRPM (Human Resources & Project Management)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-6', subject: 'GAI (Generative AI)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-wed-7', subject: 'COI (Constitution of India)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Thursday: [
+          { id: 'cseb-4-thu-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-thu-1', subject: 'VLSI (Fundamentals of VLSI Design)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. G. Challa Ram', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-thu-2', subject: 'COI (Constitution of India)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-thu-3', subject: 'DL (Deep Learning)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-thu-4', subject: 'DT (Domain Training: Moocs)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-thu-5', subject: 'PE LAB (Prompt Engineering Lab [D-310])', time: '01:50 PM', duration: '2h 30m', room: 'Lab D-310', teacher: 'Dr. K. Ashok & Mrs. G. R. L. M. Tayaru', students: 45, type: 'lab', department: dept, branch, incharge }
+        ],
+        Friday: [
+          { id: 'cseb-4-fri-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-1', subject: 'GAI (Generative AI)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-2', subject: 'ES (Embedded Systems)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. D. Murali Krishna', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-3', subject: 'HRPM (Human Resources & Project Management)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-4', subject: 'DT (Domain Training: Moocs)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-5', subject: 'VLSI (Fundamentals of VLSI Design)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. G. Challa Ram', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-6', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-fri-7', subject: 'DL (Deep Learning)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Saturday: [
+          { id: 'cseb-4-sat-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-1', subject: 'HRPM (Human Resources & Project Management)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-2', subject: 'PE (Prompt Engineering)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. K. Ashok', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-3', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-4', subject: 'COUN (Counselling & Mentorship)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-5', subject: 'GAI (Generative AI)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-6', subject: 'VLSI (Fundamentals of VLSI Design)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. G. Challa Ram', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cseb-4-sat-7', subject: 'ES (Embedded Systems)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Dr. D. Murali Krishna', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Sunday: []
+      };
+    }
+
+    // -------------------------------------------------------------
+    // 5. CSE 4TH YEAR 1ST SEM - SECTION A (CLASS: CSE-A/C, ROOM: D-304)
+    // As per Image 4
+    // -------------------------------------------------------------
+    if (dept === 'CSE' && (branch === 'CSE' || !hasBranch) && yr === '4' && sem === 'Sem 1') {
+      const roomNo = 'D-304';
+      const incharge = 'Mr. B. Anoch';
+
+      return {
+        Monday: [
+          { id: 'csea-4-mon-1', subject: 'VLSI (Fundamentals of VLSI Design)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-mon-2', subject: 'GAI (Generative AI)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Phaneendra Varma', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-mon-3', subject: 'HRPM (Human Resources & Project Management)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-mon-4', subject: 'DL (Deep Learning)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-mon-5', subject: 'DT (Domain Training: Moocs)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-mon-6', subject: 'ES (Embedded Systems)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-mon-7', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Tuesday: [
+          { id: 'csea-4-tue-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-tue-1', subject: 'ES (Embedded Systems)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-2', subject: 'COI (Constitution of India)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-3', subject: 'DL (Deep Learning)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-4', subject: 'GAI (Generative AI)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Phaneendra Varma', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-5', subject: 'HRPM (Human Resources & Project Management)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-6', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-tue-7', subject: 'VLSI (Fundamentals of VLSI Design)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Wednesday: [
+          { id: 'csea-4-wed-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-wed-1', subject: 'HRPM (Human Resources & Project Management)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-2', subject: 'VLSI (Fundamentals of VLSI Design)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-3', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-4', subject: 'ES (Embedded Systems)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-5', subject: 'PE (Prompt Engineering)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. K. Ashok', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-6', subject: 'DL (Deep Learning)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-wed-7', subject: 'GAI (Generative AI)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Phaneendra Varma', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Thursday: [
+          { id: 'csea-4-thu-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-thu-1', subject: 'DL (Deep Learning)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-thu-2', subject: 'DT (Domain Training: Moocs)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-thu-3', subject: 'GAI (Generative AI)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Phaneendra Varma', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-thu-4', subject: 'HRPM (Human Resources & Project Management)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-thu-5', subject: 'VLSI (Fundamentals of VLSI Design)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-thu-6', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-thu-7', subject: 'ES (Embedded Systems)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Friday: [
+          { id: 'csea-4-fri-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-fri-1', subject: 'GAI (Generative AI)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Phaneendra Varma', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-fri-2', subject: 'PE LAB (Prompt Engineering Lab [D-211])', time: '09:40 AM', duration: '2h 50m', room: 'Lab D-211', teacher: 'Dr. K. Ashok & Mrs. G. Sujatha', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'csea-4-fri-5', subject: 'HRPM (Human Resources & Project Management)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-fri-6', subject: 'PE (Prompt Engineering)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. K. Ashok', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-fri-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+        ],
+        Saturday: [
+          { id: 'csea-4-sat-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-sat-1', subject: 'ARVR (Augmented Reality and Virtual Reality)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. B. Anoch', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-sat-2', subject: 'COI (Constitution of India)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-sat-3', subject: 'VLSI (Fundamentals of VLSI Design)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Ms. M. Hema Latha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-sat-4', subject: 'COUN (Counselling & Career Guidance)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'csea-4-sat-5', subject: 'ES (Embedded Systems)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. E. R. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-sat-6', subject: 'DL (Deep Learning)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'csea-4-sat-7', subject: 'DT (Domain Training: Moocs)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge }
+        ],
+        Sunday: []
+      };
+    }
+
+    // -------------------------------------------------------------
+    // 6. CSE 3RD YEAR 1ST SEM (CLASS: CSE 3rd Year)
+    // -------------------------------------------------------------
+    if (dept === 'CSE' && yr === '3' && sem === 'Sem 1') {
+      const isCyber = branch === 'Cyber Security';
+      const roomNo = isCyber ? 'B-205' : 'Room 204';
+      const incharge = isCyber ? 'Dr. M. Prasad' : 'Mrs. M. Bhargavi';
+
+      return {
+        Monday: [
+          { id: 'cse-3-mon-1', subject: isCyber ? 'CNS (Cryptography & Network Security)' : 'CN (Computer Networks)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: isCyber ? 'Dr. M. Prasad' : 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-mon-2', subject: 'AI (Artificial Intelligence)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-mon-3', subject: isCyber ? 'Linux Security & OS Internals' : 'COA (Computer Organization and Architecture)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: isCyber ? 'Dr. M. Prasad' : 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-mon-4', subject: 'RES (Renewable Energy Sources)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-mon-5', subject: 'FSD-2 (Full Stack Development-2)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-mon-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Tuesday: [
+          { id: 'cse-3-tue-1', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-tue-2', subject: isCyber ? 'CNS (Cryptography & Network Security)' : 'CN (Computer Networks)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: isCyber ? 'Dr. M. Prasad' : 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-tue-3', subject: 'FSD-2 LAB (Full Stack Development-2 Lab)', time: '10:50 AM', duration: '2h 30m', room: 'Lab 301', teacher: 'Mr. Mohammad Towqeer UL Haq & Mr. MP. Praveen Kumar', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'cse-3-tue-5', subject: 'AI (Artificial Intelligence)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-tue-6', subject: 'RES (Renewable Energy Sources)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Wednesday: [
+          { id: 'cse-3-wed-1', subject: 'FSD-2 (Full Stack Development-2)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-wed-2', subject: isCyber ? 'Network Security Lab' : 'CN LAB / AI LAB', time: '09:40 AM', duration: '2h 50m', room: isCyber ? 'Lab D-310' : 'Lab 302', teacher: isCyber ? 'Dr. M. Prasad' : 'Mrs. M. Bhargavi & Dr. P. Sri Charani', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'cse-3-wed-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-wed-6', subject: 'COA (Computer Organization and Architecture)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Thursday: [
+          { id: 'cse-3-thu-1', subject: 'AI (Artificial Intelligence)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-thu-2', subject: 'RES (Renewable Energy Sources)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-thu-3', subject: isCyber ? 'Cyber Security Tinkering Lab' : 'UID using Flutter LAB', time: '10:50 AM', duration: '1h 40m', room: 'Lab 303', teacher: isCyber ? 'Dr. M. Prasad' : 'Mr. K. Rajasekhar', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'cse-3-thu-5', subject: 'CN (Computer Networks)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-thu-6', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Friday: [
+          { id: 'cse-3-fri-1', subject: 'CN (Computer Networks)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-fri-2', subject: 'EDA (Exploratory Data Analysis using Python)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-fri-3', subject: 'COA (Computer Organization and Architecture)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-fri-4', subject: 'LIB (Library & Self Study)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cse-3-fri-5', subject: 'AI (Artificial Intelligence)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-fri-6', subject: 'RES (Renewable Energy Sources)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Saturday: [
+          { id: 'cse-3-sat-1', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-sat-2', subject: 'AI (Artificial Intelligence)', time: '09:40 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'cse-3-sat-3', subject: 'CN LAB / AI LAB (Examination Prep Lab)', time: '10:50 AM', duration: '1h 40m', room: 'Lab 302', teacher: 'Mrs. M. Bhargavi & Dr. P. Sri Charani', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'cse-3-sat-5', subject: 'COUN (Counselling & Review)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'cse-3-sat-6', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
+        ],
+        Sunday: []
+      };
+    }
+
+    // -------------------------------------------------------------
+    // 7. DEFAULT CURRICULUM FOR OTHER YEARS / DEPARTMENTS
+    // -------------------------------------------------------------
+    const getGeneralSubject = (slotIdx: number, dayName: string) => {
+      const prefix = yr === '1' ? 'Engg' : dept;
+      const subjectsMap: Record<string, string[]> = {
+        IT: ['Web Technologies', 'Cloud Computing', 'Database Administration', 'Information Security', 'DevOps & CI/CD', 'Mobile App Development'],
+        ECE: ['VLSI Design', 'Embedded Systems', 'Digital Signal Processing', 'Microprocessors Lab', 'Wireless Communication', 'Signals & Systems'],
+        EEE: ['Power Electronics', 'Electrical Machines', 'Control Systems', 'Smart Grid & EV', 'Power Transmission', 'Renewable Energy'],
+        MECH: ['Thermodynamics', 'Fluid Mechanics Lab', 'Kinematics of Machinery', 'CAD/CAM SolidWorks Lab', 'Heat & Mass Transfer', 'Automobile Engg'],
+        CIVIL: ['Surveying & Geomatics', 'Strength of Materials', 'Concrete Technology Lab', 'Structural Analysis', 'Geotechnical Engineering', 'Hydraulics Lab'],
+        CSE: ['Data Structures & Algorithms', 'Operating Systems', 'DBMS', 'Computer Networks', 'Software Engineering', 'Compiler Design'],
+        AI: ['Machine Learning', 'Deep Learning', 'Computer Vision', 'NLP', 'Big Data Analytics', 'AI Ethics']
+      };
+
+      const list = subjectsMap[dept] || subjectsMap['CSE'];
+      return list[slotIdx % list.length] + (dayName === 'Wednesday' && slotIdx === 2 ? ' Lab' : '');
     };
 
-    const pool = getSubjectPool();
-    const result: WeeklySchedule = {
-      Monday: [],
-      Tuesday: [],
-      Wednesday: [],
-      Thursday: [],
-      Friday: [],
-      Saturday: [],
-      Sunday: []
-    };
+    const generalTimes = ['08:50 AM', '09:40 AM', '10:50 AM', '11:40 AM', '01:50 PM', '02:40 PM', '03:30 PM'];
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const generalResult: WeeklySchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: [] };
 
-    const convertToSessions = (items: any[], dayName: string): ClassSession[] => {
-      return items.map((item, idx) => ({
-        id: `${dept}-${branch}-${yr}-${sem}-${sec}-${dayName}-${idx}`,
-        subject: item.sub,
-        time: item.time,
-        duration: item.dur,
-        room: item.room,
-        teacher: item.teacher,
-        students: sec === 'A' ? 45 : 40,
-        type: item.type,
-        department: dept,
-        branch: branch,
-        year: yr,
-        semester: sem,
-        section: sec,
-        isAdjusted: idx === 1 && dayName === 'Monday' && sec === 'A',
-        adjustmentType: 'substitute',
-        originalTeacher: idx === 1 && dayName === 'Monday' ? 'Dr. Emily Davis' : undefined,
-        adjustmentReason: idx === 1 && dayName === 'Monday' ? 'Peer substitution' : undefined
-      }));
-    };
+    days.forEach(day => {
+      generalResult[day] = generalTimes.slice(0, 5).map((time, idx) => {
+        const isLab = idx === 2 && (day === 'Tuesday' || day === 'Thursday');
+        return {
+          id: `gen-${dept}-${yr}-${sem}-${day}-${idx}`,
+          subject: getGeneralSubject(idx, day),
+          time,
+          duration: isLab ? '2h' : '50m',
+          room: isLab ? 'Lab Core 1' : 'Room 201',
+          teacher: 'Department Faculty',
+          students: 45,
+          type: isLab ? 'lab' : idx === 4 ? 'tutorial' : 'lecture',
+          department: dept,
+          branch,
+          year: yr,
+          semester: sem,
+          section: sec
+        };
+      });
+    });
 
-    result.Monday = convertToSessions(pool.mon || [], 'Monday');
-    result.Tuesday = convertToSessions(pool.tue || [], 'Tuesday');
-    result.Wednesday = convertToSessions(pool.wed || [], 'Wednesday');
-    result.Thursday = convertToSessions(pool.thu || [], 'Thursday');
-    result.Friday = convertToSessions(pool.fri || [], 'Friday');
-    result.Saturday = convertToSessions(pool.sat || [], 'Saturday');
-    result.Sunday = []; // Sunday weekend
-
-    return result;
+    return generalResult;
   }, [selectedDepartment, selectedBranch, selectedYear, selectedSemester, selectedSection, hasBranch]);
+
+  // Dynamic list of periods/time slots that have sessions for this timetable
+  const activeTimeSlots = useMemo(() => {
+    const times = new Set<string>();
+    Object.values(weeklySchedule).forEach(dayList => {
+      dayList.forEach(cls => {
+        if (cls.time) times.add(cls.time);
+      });
+    });
+
+    if (times.size === 0) {
+      return ['08:00 AM', '08:50 AM', '09:40 AM', '10:00 AM', '10:50 AM', '11:40 AM', '01:00 PM', '01:50 PM', '02:40 PM', '03:30 PM'];
+    }
+
+    return Array.from(times).sort((a, b) => timeToMinutes(a) - timeToMinutes(b));
+  }, [weeklySchedule]);
 
   const getWeekDays = (date: Date) => {
     const week = [];
@@ -515,26 +575,13 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'lecture':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'lab':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'tutorial':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getAdjustmentColor = (type?: string) => {
-    switch (type) {
-      case 'substitute':
-        return 'bg-orange-100 text-orange-800';
-      case 'reschedule':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'room_change':
-        return 'bg-pink-100 text-pink-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -544,17 +591,27 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
   };
 
+  // Find incharge and room if defined in schedule
+  const currentIncharge = Object.values(weeklySchedule).flat().find(c => c.incharge)?.incharge;
+  const currentRoom = Object.values(weeklySchedule).flat().find(c => c.room && c.room.startsWith('Room'))?.room || Object.values(weeklySchedule).flat()[0]?.room;
+
   return (
     <div className="space-y-6">
       {/* Header Controls */}
       <div className="bg-white rounded-xl shadow-sm border p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-gray-100">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              <span>📊</span> Weekly Class Schedule Grid
-            </h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Select Department, Academic Year, Semester, and Branch to view the scheduled university timetable.
+            <div className="flex items-center gap-2">
+              <span className="text-xl">📊</span>
+              <h2 className="text-xl font-bold text-gray-900">
+                Official University Timetable
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                W.E.F: 29.06.2026
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Select Department, Academic Year (1-4), Semester (Sem 1 / Sem 2), and Branch to view the exact scheduled timetable.
             </p>
           </div>
           
@@ -587,7 +644,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             <select
               value={selectedDepartment}
               onChange={(e) => handleDepartmentChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-3 py-2 text-xs font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
             >
               {departments.map(dept => (
                 <option key={dept} value={dept}>{dept}</option>
@@ -627,7 +684,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             <select
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
             >
               {semesters.map(semester => (
                 <option key={semester} value={semester}>{semester}</option>
@@ -644,7 +701,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
               <select
                 value={selectedBranch}
                 onChange={(e) => setSelectedBranch(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-bold border border-blue-300 bg-blue-50/30 text-blue-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-xs font-bold border border-blue-300 bg-blue-50/40 text-blue-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs"
               >
                 {branchOptions.map(branch => (
                   <option key={branch} value={branch}>{branch}</option>
@@ -661,7 +718,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             <select
               value={selectedSection}
               onChange={(e) => setSelectedSection(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
             >
               {sections.map(section => (
                 <option key={section} value={section}>Section {section}</option>
@@ -670,18 +727,23 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           </div>
         </div>
 
-        {/* Current Selection Display Banner */}
-        <div className="bg-gray-50 border border-gray-200/80 p-3 rounded-xl mb-4 flex items-center justify-between flex-wrap gap-2">
-          <p className="text-xs text-gray-700 font-medium">
-            <strong>Current Timetable View:</strong>{' '}
-            <span className="text-blue-700 font-bold">{selectedDepartment}</span>
-            {hasBranch && <span> ({selectedBranch})</span>} •{' '}
-            <span className="font-semibold">Year {selectedYear}</span> •{' '}
-            <span className="font-semibold">{selectedSemester}</span> •{' '}
-            <span className="font-semibold">Section {selectedSection}</span>
-          </p>
-          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-            {selectedDepartment}{hasBranch ? ` / ${selectedBranch}` : ''} • Year {selectedYear} • {selectedSemester}
+        {/* Current Selection & College Incharge Display Banner */}
+        <div className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 border border-blue-200/70 p-3.5 rounded-xl mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
+          <div className="space-y-0.5">
+            <p className="text-xs text-gray-900 font-bold flex items-center gap-1.5">
+              <span>🏛️</span>
+              <span>
+                {selectedDepartment}{hasBranch ? ` (${selectedBranch})` : ''} • Year {selectedYear} • {selectedSemester} • Section {selectedSection}
+              </span>
+            </p>
+            <p className="text-[11px] text-gray-500">
+              {currentRoom && <span>Room: <strong className="text-gray-700">{currentRoom}</strong> • </span>}
+              {currentIncharge && <span>Class Incharge: <strong className="text-blue-800">{currentIncharge}</strong></span>}
+            </p>
+          </div>
+          
+          <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-blue-600 text-white shadow-2xs whitespace-nowrap">
+            {selectedDepartment} {hasBranch ? selectedBranch : ''} - Sec {selectedSection} (Year {selectedYear})
           </span>
         </div>
 
@@ -692,16 +754,12 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             <span>Lecture</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
+            <div className="w-3 h-3 bg-emerald-100 border border-emerald-300 rounded"></div>
             <span>Laboratory</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-purple-100 border border-purple-300 rounded"></div>
-            <span>Tutorial</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-orange-100 border border-orange-300 rounded"></div>
-            <span>Substituted</span>
+            <span>Tutorial / Honors / Mentorship</span>
           </div>
         </div>
       </div>
@@ -711,7 +769,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
         <div className="grid grid-cols-8 gap-0">
           {/* Time Column Header */}
           <div className="bg-gray-50 p-4 border-r border-b font-bold text-gray-800 text-xs uppercase tracking-wider">
-            Time Slot
+            Period / Time
           </div>
           
           {/* Day Headers */}
@@ -724,11 +782,11 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             </div>
           ))}
 
-          {/* Time Slots */}
-          {['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'].map((time) => (
+          {/* Time Slots Rows */}
+          {activeTimeSlots.map((time) => (
             <React.Fragment key={time}>
               {/* Time Label */}
-              <div className="bg-gray-50 p-3.5 border-r border-b text-xs font-bold text-gray-600 flex items-center">
+              <div className="bg-gray-50 p-3.5 border-r border-b text-xs font-bold text-gray-700 flex items-center">
                 {time}
               </div>
               
@@ -738,7 +796,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
                 const classAtTime = daySchedule.find(cls => cls.time === time);
 
                 return (
-                  <div key={`${day}-${time}`} className="border-r border-b p-2 min-h-[85px] bg-white">
+                  <div key={`${day}-${time}`} className="border-r border-b p-2 min-h-[90px] bg-white">
                     {classAtTime ? (
                       <div className="bg-white border rounded-lg p-2.5 shadow-2xs hover:shadow-md transition-shadow h-full flex flex-col justify-between">
                         <div>
@@ -754,18 +812,18 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
                           <div className="text-[11px] text-gray-600 space-y-0.5 mt-1.5">
                             <div className="flex items-center justify-between font-medium">
                               <span>📍 {classAtTime.room}</span>
-                              <span>👥 {classAtTime.students}</span>
+                              <span>🕒 {classAtTime.duration}</span>
                             </div>
                             
                             <div className="font-semibold text-gray-800 text-xs mt-1 pt-1 border-t border-gray-100 flex items-center gap-1">
                               <span>👨‍🏫</span>
-                              <span className="truncate">{classAtTime.teacher}</span>
+                              <span className="truncate" title={classAtTime.teacher}>{classAtTime.teacher}</span>
                             </div>
                           </div>
                         </div>
 
                         {classAtTime.isAdjusted && (
-                          <div className="flex items-center gap-1 mt-2 pt-1 border-t border-gray-100">
+                          <div className="flex items-center gap-1 mt-1.5 pt-1 border-t border-gray-100">
                             <span className="text-[10px] font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
                               🔄 Peer Covered
                             </span>
@@ -792,7 +850,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-blue-50/60 border border-blue-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1">Total Scheduled Classes</h4>
+            <h4 className="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1">Total Scheduled Periods</h4>
             <p className="text-2xl font-black text-blue-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.length, 0)}
             </p>
@@ -800,11 +858,11 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           </div>
 
           <div className="bg-emerald-50/60 border border-emerald-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-emerald-900 uppercase tracking-wider mb-1">Laboratory Sessions</h4>
+            <h4 className="font-bold text-xs text-emerald-900 uppercase tracking-wider mb-1">Practical Lab Periods</h4>
             <p className="text-2xl font-black text-emerald-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.filter(c => c.type === 'lab').length, 0)}
             </p>
-            <p className="text-xs text-emerald-600/80 mt-0.5">Hands-on practical labs</p>
+            <p className="text-xs text-emerald-600/80 mt-0.5">Laboratory & Tinkering sessions</p>
           </div>
 
           <div className="bg-purple-50/60 border border-purple-200/60 p-4 rounded-xl">
@@ -812,13 +870,13 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             <p className="text-2xl font-black text-purple-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.filter(c => c.type === 'lecture' || c.type === 'tutorial').length, 0)}
             </p>
-            <p className="text-xs text-purple-600/80 mt-0.5">Theoretical & problem sessions</p>
+            <p className="text-xs text-purple-600/80 mt-0.5">Core theory, honors & mentoring</p>
           </div>
 
           <div className="bg-amber-50/60 border border-amber-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-amber-900 uppercase tracking-wider mb-1">Current Academic Year</h4>
-            <p className="text-2xl font-black text-amber-700">Year {selectedYear}</p>
-            <p className="text-xs text-amber-600/80 mt-0.5">{selectedSemester} Curriculum</p>
+            <h4 className="font-bold text-xs text-amber-900 uppercase tracking-wider mb-1">Classroom Assigned</h4>
+            <p className="text-2xl font-black text-amber-700">{currentRoom || 'Assigned Hall'}</p>
+            <p className="text-xs text-amber-600/80 mt-0.5">{currentIncharge ? `Incharge: ${currentIncharge}` : 'Department Room'}</p>
           </div>
         </div>
       </div>
