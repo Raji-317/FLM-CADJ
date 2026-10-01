@@ -30,9 +30,9 @@ export interface FacultyProfile {
 export const FACULTY_DIRECTORY: Record<string, FacultyProfile> = {
   // Existing system faculty
   'teacher@edu.com': {
-    name: 'Prof. Sarah Johnson',
+    name: 'Prof. S. Rajeshwari',
     email: 'teacher@edu.com',
-    department: 'Computer Science',
+    department: 'CSE',
     specialization: 'Cloud Computing & Networks',
     role: 'Professor'
   },
@@ -247,6 +247,128 @@ export const FACULTY_DIRECTORY: Record<string, FacultyProfile> = {
     department: 'CSE',
     specialization: 'Domain Training: Moocs(SWAYAM/NPTEL)',
     role: 'Professor'
+  },
+
+  // IT Department Faculty
+  'ramaraok@edu.com': {
+    name: 'Dr. K. V. Rama Rao',
+    email: 'ramaraok@edu.com',
+    department: 'IT',
+    specialization: 'Web Technologies & Cloud Computing',
+    role: 'Professor & HOD'
+  },
+  'swapnap@edu.com': {
+    name: 'Mrs. P. Swapna',
+    email: 'swapnap@edu.com',
+    department: 'IT',
+    specialization: 'Cloud Computing & Virtualization',
+    role: 'Assistant Professor'
+  },
+  'venkateshn@edu.com': {
+    name: 'Mr. N. Venkatesh',
+    email: 'venkateshn@edu.com',
+    department: 'IT',
+    specialization: 'Database Administration & Big Data',
+    role: 'Assistant Professor'
+  },
+  'sureshkumarg@edu.com': {
+    name: 'Dr. G. Suresh Kumar',
+    email: 'sureshkumarg@edu.com',
+    department: 'IT',
+    specialization: 'Information Security & Cryptography',
+    role: 'Associate Professor'
+  },
+
+  // ECE Department Faculty
+  'sireeshad@edu.com': {
+    name: 'Mrs. D. Sireesha',
+    email: 'sireeshad@edu.com',
+    department: 'ECE',
+    specialization: 'Embedded Systems & ARM Controllers',
+    role: 'Assistant Professor'
+  },
+  'muralikrishnav@edu.com': {
+    name: 'Dr. V. Murali Krishna',
+    email: 'muralikrishnav@edu.com',
+    department: 'ECE',
+    specialization: 'Digital Signal Processing & Image Processing',
+    role: 'Professor'
+  },
+  'srinivasch@edu.com': {
+    name: 'Mr. Ch. Srinivas',
+    email: 'srinivasch@edu.com',
+    department: 'ECE',
+    specialization: 'Wireless & Cellular Communications',
+    role: 'Assistant Professor'
+  },
+
+  // EEE Department Faculty
+  'sudhakararaom@edu.com': {
+    name: 'Dr. M. V. Sudhakara Rao',
+    email: 'sudhakararaom@edu.com',
+    department: 'EEE',
+    specialization: 'Power Electronics & Drives',
+    role: 'Professor & HOD'
+  },
+  'bhavanis@edu.com': {
+    name: 'Mrs. S. Bhavani',
+    email: 'bhavanis@edu.com',
+    department: 'EEE',
+    specialization: 'Electrical Machines & Control Systems',
+    role: 'Assistant Professor'
+  },
+  'saikiranv@edu.com': {
+    name: 'Mr. V. Sai Kiran',
+    email: 'saikiranv@edu.com',
+    department: 'EEE',
+    specialization: 'Smart Grid & Electric Vehicles',
+    role: 'Assistant Professor'
+  },
+
+  // MECH Department Faculty
+  'satyanarayana@edu.com': {
+    name: 'Dr. K. Satyanarayana',
+    email: 'satyanarayana@edu.com',
+    department: 'MECH',
+    specialization: 'Applied Thermodynamics & Thermal Engineering',
+    role: 'Professor & HOD'
+  },
+  'prasadrajup@edu.com': {
+    name: 'Mr. P. Prasad Raju',
+    email: 'prasadrajup@edu.com',
+    department: 'MECH',
+    specialization: 'Fluid Mechanics & Hydraulic Machinery',
+    role: 'Assistant Professor'
+  },
+  'ravisankarm@edu.com': {
+    name: 'Dr. M. Ravi Sankar',
+    email: 'ravisankarm@edu.com',
+    department: 'MECH',
+    specialization: 'Kinematics of Machinery & Robotics',
+    role: 'Associate Professor'
+  },
+
+  // CIVIL Department Faculty
+  'ramamurthyp@edu.com': {
+    name: 'Dr. P. Rama Murthy',
+    email: 'ramamurthyp@edu.com',
+    department: 'CIVIL',
+    specialization: 'Advanced Surveying & GIS Mapping',
+    role: 'Professor & HOD'
+  },
+  'srilalithab@edu.com': {
+    name: 'Mrs. B. Sri Lalitha',
+    email: 'srilalithab@edu.com',
+    department: 'CIVIL',
+    specialization: 'Strength of Materials & Structural Design',
+    role: 'Assistant Professor'
+  },
+  'jagadeeshk@edu.com': {
+    name: 'Mr. K. Jagadeesh',
+    email: 'jagadeeshk@edu.com',
+    department: 'CIVIL',
+    specialization: 'Structural Analysis & RCC Design',
+    role: 'Assistant Professor'
   }
 };
 
@@ -999,6 +1121,208 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
     Saturday: [
       { id: 'sn-sat-1', subject: 'DT (Domain Training: Moocs)', time: '09:40 AM', duration: '50m', room: 'B-204', students: 45, type: 'tutorial', branch: 'Cyber Security', section: 'A' },
       { id: 'sn-sat-2', subject: 'DT (Domain Training: Moocs)', time: '03:30 PM', duration: '50m', room: 'D-304', students: 45, type: 'tutorial', branch: 'CSE', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // IT: Dr. K. V. Rama Rao
+  'ramaraok@edu.com': {
+    Monday: [
+      { id: 'rr-mon-1', subject: 'WT (Web Technologies)', time: '08:50 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' },
+      { id: 'rr-mon-2', subject: 'WT (Web Technologies)', time: '01:50 PM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'rr-tue-1', subject: 'WT (Web Technologies)', time: '10:50 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' },
+      { id: 'rr-tue-2', subject: 'WT LAB (Web Technologies Lab)', time: '01:50 PM', duration: '2h', room: 'IT-204 Lab', students: 45, type: 'lab', branch: 'IT', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'rr-wed-1', subject: 'WT (Web Technologies)', time: '01:50 PM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'rr-thu-1', subject: 'WT (Web Technologies)', time: '09:40 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'rr-sat-1', subject: 'WT (Web Technologies)', time: '09:40 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' },
+      { id: 'rr-sat-2', subject: 'COUN (Mentorship & Career Counselling)', time: '11:40 AM', duration: '50m', room: 'IT-204', students: 45, type: 'tutorial', branch: 'IT', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // IT: Mrs. P. Swapna
+  'swapnap@edu.com': {
+    Monday: [
+      { id: 'sw-mon-1', subject: 'CC (Cloud Computing & Virtualization)', time: '09:40 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'sw-tue-1', subject: 'CC (Cloud Computing & Virtualization)', time: '08:50 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' },
+      { id: 'sw-tue-2', subject: 'WT LAB (Web Technologies Lab)', time: '01:50 PM', duration: '2h', room: 'IT-204 Lab', students: 45, type: 'lab', branch: 'IT', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'sw-wed-1', subject: 'CC (Cloud Computing & Virtualization)', time: '10:50 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'sw-thu-1', subject: 'CC (Cloud Computing & Virtualization)', time: '11:40 AM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Friday: [
+      { id: 'sw-fri-1', subject: 'CC (Cloud Computing & Virtualization)', time: '01:50 PM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'sw-sat-1', subject: 'CC (Cloud Computing & Virtualization)', time: '02:40 PM', duration: '50m', room: 'IT-204', students: 45, type: 'lecture', branch: 'IT', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // ECE: Mrs. D. Sireesha
+  'sireeshad@edu.com': {
+    Monday: [
+      { id: 'si-mon-1', subject: 'ES (Embedded Systems & Microcontrollers)', time: '09:40 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'si-tue-1', subject: 'ES (Embedded Systems & Microcontrollers)', time: '08:50 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'si-wed-1', subject: 'ES (Embedded Systems & Microcontrollers)', time: '10:50 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'si-thu-1', subject: 'MP LAB (Microprocessors & Microcontrollers Lab)', time: '01:50 PM', duration: '2h', room: 'EC-106 Lab', students: 45, type: 'lab', branch: 'ECE', section: 'A' }
+    ],
+    Friday: [
+      { id: 'si-fri-1', subject: 'ES (Embedded Systems & Microcontrollers)', time: '01:50 PM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // ECE: Dr. V. Murali Krishna
+  'muralikrishnav@edu.com': {
+    Monday: [
+      { id: 'vm-mon-1', subject: 'DSP (Digital Signal Processing)', time: '10:50 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'vm-tue-1', subject: 'DSP LAB (Digital Signal Processing Lab)', time: '01:50 PM', duration: '2h', room: 'EC-106 Lab', students: 45, type: 'lab', branch: 'ECE', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'vm-wed-1', subject: 'DSP (Digital Signal Processing)', time: '11:40 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Friday: [
+      { id: 'vm-fri-1', subject: 'DSP (Digital Signal Processing)', time: '08:50 AM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'vm-sat-1', subject: 'DSP (Digital Signal Processing)', time: '01:50 PM', duration: '50m', room: 'EC-106', students: 45, type: 'lecture', branch: 'ECE', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // EEE: Dr. M. V. Sudhakara Rao
+  'sudhakararaom@edu.com': {
+    Monday: [
+      { id: 'sr-mon-1', subject: 'PE (Power Electronics & Inverters)', time: '08:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'sr-tue-1', subject: 'PE (Power Electronics & Inverters)', time: '10:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'sr-wed-1', subject: 'PE (Power Electronics & Inverters)', time: '01:50 PM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'sr-thu-1', subject: 'PE LAB (Power Electronics & Drives Lab)', time: '01:50 PM', duration: '2h', room: 'EE-205 Lab', students: 45, type: 'lab', branch: 'EEE', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'sr-sat-1', subject: 'PE (Power Electronics & Inverters)', time: '09:40 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // EEE: Mrs. S. Bhavani
+  'bhavanis@edu.com': {
+    Monday: [
+      { id: 'bh-mon-1', subject: 'EM (Electrical Machines-II)', time: '09:40 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'bh-tue-1', subject: 'EM LAB (Electrical Machines Laboratory)', time: '01:50 PM', duration: '2h', room: 'EE-205 Lab', students: 45, type: 'lab', branch: 'EEE', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'bh-wed-1', subject: 'EM (Electrical Machines-II)', time: '10:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Friday: [
+      { id: 'bh-fri-1', subject: 'EM (Electrical Machines-II)', time: '01:50 PM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'bh-sat-1', subject: 'EM (Electrical Machines-II)', time: '02:40 PM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // MECH: Dr. K. Satyanarayana
+  'satyanarayana@edu.com': {
+    Monday: [
+      { id: 'ks-mon-1', subject: 'TD (Applied Thermodynamics)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'ks-tue-1', subject: 'TD (Applied Thermodynamics)', time: '10:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'ks-wed-1', subject: 'TD (Applied Thermodynamics)', time: '01:50 PM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'ks-thu-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'ks-sat-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // MECH: Mr. P. Prasad Raju
+  'prasadrajup@edu.com': {
+    Monday: [
+      { id: 'pr-mon-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'pr-tue-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'pr-thu-1', subject: 'FM LAB (Fluid Mechanics Laboratory)', time: '01:50 PM', duration: '2h', room: 'ME-301 Lab', students: 45, type: 'lab', branch: 'MECH', section: 'A' }
+    ],
+    Friday: [
+      { id: 'pr-fri-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // CIVIL: Dr. P. Rama Murthy
+  'ramamurthyp@edu.com': {
+    Monday: [
+      { id: 'rm-mon-1', subject: 'SURV (Advanced Surveying & GIS)', time: '08:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'rm-tue-1', subject: 'SURV (Advanced Surveying & GIS)', time: '10:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Thursday: [
+      { id: 'rm-thu-1', subject: 'SURV LAB (Total Station Surveying Lab)', time: '01:50 PM', duration: '2h', room: 'CE-102 Lab', students: 45, type: 'lab', branch: 'CIVIL', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'rm-sat-1', subject: 'SURV (Advanced Surveying & GIS)', time: '09:40 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // CIVIL: Mrs. B. Sri Lalitha
+  'srilalithab@edu.com': {
+    Monday: [
+      { id: 'sl-mon-1', subject: 'SOM (Strength of Materials)', time: '09:40 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Tuesday: [
+      { id: 'sl-tue-1', subject: 'SOM (Strength of Materials)', time: '08:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' },
+      { id: 'sl-tue-2', subject: 'CT LAB (Concrete & Material Testing Lab)', time: '01:50 PM', duration: '2h', room: 'CE-102 Lab', students: 45, type: 'lab', branch: 'CIVIL', section: 'A' }
+    ],
+    Wednesday: [
+      { id: 'sl-wed-1', subject: 'SOM (Strength of Materials)', time: '10:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Friday: [
+      { id: 'sl-fri-1', subject: 'SOM (Strength of Materials)', time: '01:50 PM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Saturday: [
+      { id: 'sl-sat-1', subject: 'SOM (Strength of Materials)', time: '02:40 PM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
     ],
     Sunday: []
   }

@@ -141,7 +141,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           { id: 'aids-3-fri-1', subject: 'AI (Artificial Intelligence)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aids-3-fri-2', subject: 'RES (Renewable Energy Sources)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aids-3-fri-3', subject: 'CN (Computer Networks)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aids-3-fri-4', subject: 'LIB (Library & Self Study)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aids-3-fri-4', subject: 'LIB (Library & Self Study)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
           { id: 'aids-3-fri-5', subject: 'UID using Flutter', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aids-3-fri-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aids-3-fri-7', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
@@ -205,7 +205,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           { id: 'aiml-3-fri-4', subject: 'CN (Computer Networks)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aiml-3-fri-5', subject: 'FSD-2 (Full Stack Development-2)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'aiml-3-fri-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-7', subject: 'LIB (Library & Self Study)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+          { id: 'aiml-3-fri-7', subject: 'LIB (Library & Self Study)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge }
         ],
         Saturday: [
           { id: 'aiml-3-sat-1', subject: 'FSD-2 (Full Stack Development-2)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
@@ -273,7 +273,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           { id: 'cs-4-fri-2', subject: 'EH LAB (Ethical Hacking Lab [D-310])', time: '09:40 AM', duration: '2h 50m', room: 'Lab D-310', teacher: 'Dr. M. Prasad & Mrs. K. Soni Sharmila', students: 45, type: 'lab', department: dept, branch, incharge },
           { id: 'cs-4-fri-5', subject: 'DL (Deep Learning)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. K. Soni Sharmila', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'cs-4-fri-6', subject: 'COI (Constitution of India)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. A. Nageswara Rao', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'cs-4-fri-7', subject: 'LIB (Library & Technical Reading)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+          { id: 'cs-4-fri-7', subject: 'LIB (Library & Technical Reading)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge }
         ],
         Saturday: [
           { id: 'cs-4-sat-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
@@ -315,7 +315,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           { id: 'cseb-4-tue-4', subject: 'GAI (Generative AI)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: 'Mr. Ch. Venkata Ramana', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'cseb-4-tue-5', subject: 'DL (Deep Learning)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. G. Sujatha', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'cseb-4-tue-6', subject: 'DT (Domain Training: Moocs)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. S. Nagarajan', students: 45, type: 'tutorial', department: dept, branch, incharge },
-          { id: 'cseb-4-tue-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+          { id: 'cseb-4-tue-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge }
         ],
         Wednesday: [
           { id: 'cseb-4-wed-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
@@ -413,7 +413,7 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           { id: 'csea-4-fri-2', subject: 'PE LAB (Prompt Engineering Lab [D-211])', time: '09:40 AM', duration: '2h 50m', room: 'Lab D-211', teacher: 'Dr. K. Ashok & Mrs. G. Sujatha', students: 45, type: 'lab', department: dept, branch, incharge },
           { id: 'csea-4-fri-5', subject: 'HRPM (Human Resources & Project Management)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. P. Ramesh', students: 45, type: 'lecture', department: dept, branch, incharge },
           { id: 'csea-4-fri-6', subject: 'PE (Prompt Engineering)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. K. Ashok', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'csea-4-fri-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: 'Faculty Incharge', students: 45, type: 'tutorial', department: dept, branch, incharge }
+          { id: 'csea-4-fri-7', subject: 'LIB (Library & Self Study)', time: '03:30 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge }
         ],
         Saturday: [
           { id: 'csea-4-sat-0', subject: 'HONORS (Data Analytics with Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. P. T. S. N. Murty', students: 45, type: 'tutorial', department: dept, branch, incharge },
@@ -486,50 +486,179 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     }
 
     // -------------------------------------------------------------
-    // 7. DEFAULT CURRICULUM FOR OTHER YEARS / DEPARTMENTS
+    // 7. REALISTIC CURRICULUM WITH INDIAN FACULTY NAMES FOR REMAINING DEPARTMENTS & YEARS
+    // (IT, ECE, EEE, MECH, CIVIL, and general years)
     // -------------------------------------------------------------
-    const getGeneralSubject = (slotIdx: number, dayName: string) => {
-      const prefix = yr === '1' ? 'Engg' : dept;
-      const subjectsMap: Record<string, string[]> = {
-        IT: ['Web Technologies', 'Cloud Computing', 'Database Administration', 'Information Security', 'DevOps & CI/CD', 'Mobile App Development'],
-        ECE: ['VLSI Design', 'Embedded Systems', 'Digital Signal Processing', 'Microprocessors Lab', 'Wireless Communication', 'Signals & Systems'],
-        EEE: ['Power Electronics', 'Electrical Machines', 'Control Systems', 'Smart Grid & EV', 'Power Transmission', 'Renewable Energy'],
-        MECH: ['Thermodynamics', 'Fluid Mechanics Lab', 'Kinematics of Machinery', 'CAD/CAM SolidWorks Lab', 'Heat & Mass Transfer', 'Automobile Engg'],
-        CIVIL: ['Surveying & Geomatics', 'Strength of Materials', 'Concrete Technology Lab', 'Structural Analysis', 'Geotechnical Engineering', 'Hydraulics Lab'],
-        CSE: ['Data Structures & Algorithms', 'Operating Systems', 'DBMS', 'Computer Networks', 'Software Engineering', 'Compiler Design'],
-        AI: ['Machine Learning', 'Deep Learning', 'Computer Vision', 'NLP', 'Big Data Analytics', 'AI Ethics']
-      };
+    interface DeptCourse {
+      code: string;
+      subject: string;
+      teacher: string;
+      type: 'lecture' | 'lab' | 'tutorial';
+    }
 
-      const list = subjectsMap[dept] || subjectsMap['CSE'];
-      return list[slotIdx % list.length] + (dayName === 'Wednesday' && slotIdx === 2 ? ' Lab' : '');
+    interface DeptCurriculum {
+      room: string;
+      incharge: string;
+      courses: DeptCourse[];
+    }
+
+    const deptCurriculumMap: Record<string, DeptCurriculum> = {
+      IT: {
+        room: 'IT-204',
+        incharge: 'Dr. K. V. Rama Rao',
+        courses: [
+          { code: 'WT', subject: 'WT (Web Technologies)', teacher: 'Dr. K. V. Rama Rao', type: 'lecture' },
+          { code: 'CC', subject: 'CC (Cloud Computing & Virtualization)', teacher: 'Mrs. P. Swapna', type: 'lecture' },
+          { code: 'DBA', subject: 'DBA (Database Administration & Big Data)', teacher: 'Mr. N. Venkatesh', type: 'lecture' },
+          { code: 'IS', subject: 'IS (Information Security & Cryptography)', teacher: 'Dr. G. Suresh Kumar', type: 'lecture' },
+          { code: 'DEVOPS', subject: 'DEVOPS (DevOps & CI/CD Pipelines)', teacher: 'Mrs. T. Anitha', type: 'lecture' },
+          { code: 'MAD', subject: 'MAD (Mobile Application Development)', teacher: 'Mr. B. Ravi Teja', type: 'lecture' },
+          { code: 'WT LAB', subject: 'WT LAB (Web Technologies Lab)', teacher: 'Dr. K. V. Rama Rao & Mrs. P. Swapna', type: 'lab' },
+          { code: 'MAD LAB', subject: 'MAD LAB (Mobile Application Development Lab)', teacher: 'Mr. B. Ravi Teja & Mrs. T. Anitha', type: 'lab' }
+        ]
+      },
+      ECE: {
+        room: 'EC-106',
+        incharge: 'Dr. Rajesh Kumar',
+        courses: [
+          { code: 'VLSI', subject: 'VLSI (VLSI System Design & Verilog)', teacher: 'Dr. Rajesh Kumar', type: 'lecture' },
+          { code: 'ES', subject: 'ES (Embedded Systems & Microcontrollers)', teacher: 'Mrs. D. Sireesha', type: 'lecture' },
+          { code: 'DSP', subject: 'DSP (Digital Signal Processing)', teacher: 'Dr. V. Murali Krishna', type: 'lecture' },
+          { code: 'WC', subject: 'WC (Wireless & Cellular Communications)', teacher: 'Mr. Ch. Srinivas', type: 'lecture' },
+          { code: 'SS', subject: 'SS (Signals and Systems Analysis)', teacher: 'Mrs. K. Himabindu', type: 'lecture' },
+          { code: 'DIP', subject: 'DIP (Digital Image Processing)', teacher: 'Mr. S. Satyanarayana', type: 'lecture' },
+          { code: 'DSP LAB', subject: 'DSP LAB (Digital Signal Processing Lab)', teacher: 'Dr. V. Murali Krishna & Mrs. K. Himabindu', type: 'lab' },
+          { code: 'MP LAB', subject: 'MP LAB (Microprocessors & Microcontrollers Lab)', teacher: 'Mr. S. Satyanarayana & Mrs. D. Sireesha', type: 'lab' }
+        ]
+      },
+      EEE: {
+        room: 'EE-205',
+        incharge: 'Dr. M. V. Sudhakara Rao',
+        courses: [
+          { code: 'PE', subject: 'PE (Power Electronics & Inverters)', teacher: 'Dr. M. V. Sudhakara Rao', type: 'lecture' },
+          { code: 'EM', subject: 'EM (Electrical Machines-II)', teacher: 'Mrs. S. Bhavani', type: 'lecture' },
+          { code: 'CS', subject: 'CS (Control Systems & State Space)', teacher: 'Dr. P. Naresh Kumar', type: 'lecture' },
+          { code: 'EV', subject: 'EV (Smart Grid & Electric Vehicles)', teacher: 'Mr. V. Sai Kiran', type: 'lecture' },
+          { code: 'PTD', subject: 'PTD (Power Transmission & Distribution)', teacher: 'Mrs. R. Gayathri', type: 'lecture' },
+          { code: 'RES', subject: 'RES (Renewable Energy Sources & Solar)', teacher: 'Mr. K. Kalyan Sagar', type: 'lecture' },
+          { code: 'EM LAB', subject: 'EM LAB (Electrical Machines Laboratory)', teacher: 'Mrs. S. Bhavani & Mr. V. Sai Kiran', type: 'lab' },
+          { code: 'PE LAB', subject: 'PE LAB (Power Electronics & Drives Lab)', teacher: 'Dr. M. V. Sudhakara Rao & Dr. P. Naresh Kumar', type: 'lab' }
+        ]
+      },
+      MECH: {
+        room: 'ME-301',
+        incharge: 'Dr. K. Satyanarayana',
+        courses: [
+          { code: 'TD', subject: 'TD (Applied Thermodynamics)', teacher: 'Dr. K. Satyanarayana', type: 'lecture' },
+          { code: 'FM', subject: 'FM (Fluid Mechanics & Machinery)', teacher: 'Mr. P. Prasad Raju', type: 'lecture' },
+          { code: 'KM', subject: 'KM (Kinematics of Machinery)', teacher: 'Dr. M. Ravi Sankar', type: 'lecture' },
+          { code: 'HMT', subject: 'HMT (Heat and Mass Transfer)', teacher: 'Mrs. V. Madhavi', type: 'lecture' },
+          { code: 'AE', subject: 'AE (Automobile Engineering)', teacher: 'Mr. T. Surya Prakash', type: 'lecture' },
+          { code: 'MT', subject: 'MT (Manufacturing Technology)', teacher: 'Mr. B. Vinod Kumar', type: 'lecture' },
+          { code: 'CAD LAB', subject: 'CAD LAB (SolidWorks & ANSYS Simulation Lab)', teacher: 'Mr. B. Vinod Kumar & Dr. M. Ravi Sankar', type: 'lab' },
+          { code: 'FM LAB', subject: 'FM LAB (Fluid Mechanics Laboratory)', teacher: 'Mr. P. Prasad Raju & Mr. T. Surya Prakash', type: 'lab' }
+        ]
+      },
+      CIVIL: {
+        room: 'CE-102',
+        incharge: 'Dr. P. Rama Murthy',
+        courses: [
+          { code: 'SURV', subject: 'SURV (Advanced Surveying & GIS)', teacher: 'Dr. P. Rama Murthy', type: 'lecture' },
+          { code: 'SOM', subject: 'SOM (Strength of Materials)', teacher: 'Mrs. B. Sri Lalitha', type: 'lecture' },
+          { code: 'SA', subject: 'SA (Structural Analysis & RCC)', teacher: 'Mr. K. Jagadeesh', type: 'lecture' },
+          { code: 'GE', subject: 'GE (Geotechnical Engineering)', teacher: 'Mrs. N. Harika', type: 'lecture' },
+          { code: 'HWR', subject: 'HWR (Hydraulics & Water Resources)', teacher: 'Mr. R. Mohan Krishna', type: 'lecture' },
+          { code: 'CT', subject: 'CT (Concrete Technology & Testing)', teacher: 'Dr. S. Vijaya Kumar', type: 'lecture' },
+          { code: 'CT LAB', subject: 'CT LAB (Concrete & Material Testing Lab)', teacher: 'Dr. S. Vijaya Kumar & Mrs. B. Sri Lalitha', type: 'lab' },
+          { code: 'SURV LAB', subject: 'SURV LAB (Total Station Surveying Lab)', teacher: 'Dr. P. Rama Murthy & Mr. K. Jagadeesh', type: 'lab' }
+        ]
+      },
+      CSE: {
+        room: 'Room 201',
+        incharge: 'Dr. A. Sri Krishna',
+        courses: [
+          { code: 'DSA', subject: 'DSA (Data Structures & Algorithms)', teacher: 'Dr. V. Harinadh', type: 'lecture' },
+          { code: 'DBMS', subject: 'DBMS (Database Management Systems)', teacher: 'Dr. A. Sri Krishna', type: 'lecture' },
+          { code: 'OS', subject: 'OS (Operating Systems & System Calls)', teacher: 'Prof. Pravallika Prathikonda', type: 'lecture' },
+          { code: 'CN', subject: 'CN (Computer Networks)', teacher: 'Mrs. M. Bhargavi', type: 'lecture' },
+          { code: 'SE', subject: 'SE (Software Engineering)', teacher: 'Mr. G. Surendra', type: 'lecture' },
+          { code: 'CD', subject: 'CD (Compiler Design)', teacher: 'Dr. K. Ashok', type: 'lecture' },
+          { code: 'DSA LAB', subject: 'DSA LAB (Data Structures & Algorithms Lab)', teacher: 'Dr. V. Harinadh & Prof. Pravallika Prathikonda', type: 'lab' },
+          { code: 'DBMS LAB', subject: 'DBMS LAB (Database Systems Lab)', teacher: 'Dr. A. Sri Krishna & Mr. G. Surendra', type: 'lab' }
+        ]
+      },
+      AI: {
+        room: 'AI-101',
+        incharge: 'Dr. P. Sri Charani',
+        courses: [
+          { code: 'AI', subject: 'AI (Artificial Intelligence Principles)', teacher: 'Dr. P. Sri Charani', type: 'lecture' },
+          { code: 'ML', subject: 'ML (Machine Learning Foundations)', teacher: 'Prof. Pradeep Juluri', type: 'lecture' },
+          { code: 'EDA', subject: 'EDA (Exploratory Data Analysis using Python)', teacher: 'Mr. MP. Praveen Kumar', type: 'lecture' },
+          { code: 'COA', subject: 'COA (Computer Organization and Architecture)', teacher: 'Mr. K. Srikanth', type: 'lecture' },
+          { code: 'CN', subject: 'CN (Computer Networks)', teacher: 'Mrs. M. Bhargavi', type: 'lecture' },
+          { code: 'FSD', subject: 'FSD (Full Stack Development)', teacher: 'Mr. Mohammad Towqeer UL Haq', type: 'lecture' },
+          { code: 'AI LAB', subject: 'AI LAB (Artificial Intelligence Lab)', teacher: 'Dr. P. Sri Charani & Ms. R. D. Priyanka', type: 'lab' },
+          { code: 'EDA LAB', subject: 'EDA LAB (Python Data Science Lab)', teacher: 'Mr. MP. Praveen Kumar & Mr. K. Srikanth', type: 'lab' }
+        ]
+      }
     };
 
-    const generalTimes = ['08:50 AM', '09:40 AM', '10:50 AM', '11:40 AM', '01:50 PM', '02:40 PM', '03:30 PM'];
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const generalResult: WeeklySchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: [] };
+    const cur = deptCurriculumMap[dept] || deptCurriculumMap['IT'];
+    const courses = cur.courses;
+    const roomNo = cur.room;
+    const incharge = cur.incharge;
 
-    days.forEach(day => {
-      generalResult[day] = generalTimes.slice(0, 5).map((time, idx) => {
-        const isLab = idx === 2 && (day === 'Tuesday' || day === 'Thursday');
-        return {
-          id: `gen-${dept}-${yr}-${sem}-${day}-${idx}`,
-          subject: getGeneralSubject(idx, day),
-          time,
-          duration: isLab ? '2h' : '50m',
-          room: isLab ? 'Lab Core 1' : 'Room 201',
-          teacher: 'Department Faculty',
-          students: 45,
-          type: isLab ? 'lab' : idx === 4 ? 'tutorial' : 'lecture',
-          department: dept,
-          branch,
-          year: yr,
-          semester: sem,
-          section: sec
-        };
-      });
-    });
-
-    return generalResult;
+    return {
+      Monday: [
+        { id: `gen-${dept}-mon-1`, subject: courses[0].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[0].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-mon-2`, subject: courses[1].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-mon-3`, subject: courses[2].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-mon-4`, subject: courses[3].subject, time: '11:40 AM', duration: '50m', room: roomNo, teacher: courses[3].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-mon-5`, subject: courses[4].subject, time: '01:50 PM', duration: '50m', room: roomNo, teacher: courses[4].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-mon-6`, subject: courses[5].subject, time: '02:40 PM', duration: '50m', room: roomNo, teacher: courses[5].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Tuesday: [
+        { id: `gen-${dept}-tue-1`, subject: courses[1].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-tue-2`, subject: courses[2].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-tue-3`, subject: courses[0].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[0].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-tue-4`, subject: courses[4].subject, time: '11:40 AM', duration: '50m', room: roomNo, teacher: courses[4].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-tue-5`, subject: courses[6].subject, time: '01:50 PM', duration: '2h', room: `${roomNo} Lab`, teacher: courses[6].teacher, students: 45, type: 'lab', department: dept, branch, incharge },
+        { id: `gen-${dept}-tue-6`, subject: courses[3].subject, time: '03:30 PM', duration: '50m', room: roomNo, teacher: courses[3].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Wednesday: [
+        { id: `gen-${dept}-wed-1`, subject: courses[3].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[3].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-wed-2`, subject: courses[4].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[4].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-wed-3`, subject: courses[1].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-wed-4`, subject: courses[2].subject, time: '11:40 AM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-wed-5`, subject: courses[0].subject, time: '01:50 PM', duration: '50m', room: roomNo, teacher: courses[0].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-wed-6`, subject: courses[5].subject, time: '02:40 PM', duration: '50m', room: roomNo, teacher: courses[5].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Thursday: [
+        { id: `gen-${dept}-thu-1`, subject: courses[4].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[4].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-thu-2`, subject: courses[0].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[0].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-thu-3`, subject: courses[5].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[5].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-thu-4`, subject: courses[1].subject, time: '11:40 AM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-thu-5`, subject: courses[7].subject, time: '01:50 PM', duration: '2h', room: `${roomNo} Lab`, teacher: courses[7].teacher, students: 45, type: 'lab', department: dept, branch, incharge },
+        { id: `gen-${dept}-thu-6`, subject: courses[2].subject, time: '03:30 PM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Friday: [
+        { id: `gen-${dept}-fri-1`, subject: courses[2].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-fri-2`, subject: courses[3].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[3].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-fri-3`, subject: courses[5].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[5].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-fri-4`, subject: 'LIB (Library & Technical Reading)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+        { id: `gen-${dept}-fri-5`, subject: courses[1].subject, time: '01:50 PM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-fri-6`, subject: courses[4].subject, time: '02:40 PM', duration: '50m', room: roomNo, teacher: courses[4].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Saturday: [
+        { id: `gen-${dept}-sat-1`, subject: courses[5].subject, time: '08:50 AM', duration: '50m', room: roomNo, teacher: courses[5].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-sat-2`, subject: courses[0].subject, time: '09:40 AM', duration: '50m', room: roomNo, teacher: courses[0].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-sat-3`, subject: courses[3].subject, time: '10:50 AM', duration: '50m', room: roomNo, teacher: courses[3].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-sat-4`, subject: 'COUN (Mentorship & Career Counselling)', time: '11:40 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+        { id: `gen-${dept}-sat-5`, subject: courses[2].subject, time: '01:50 PM', duration: '50m', room: roomNo, teacher: courses[2].teacher, students: 45, type: 'lecture', department: dept, branch, incharge },
+        { id: `gen-${dept}-sat-6`, subject: courses[1].subject, time: '02:40 PM', duration: '50m', room: roomNo, teacher: courses[1].teacher, students: 45, type: 'lecture', department: dept, branch, incharge }
+      ],
+      Sunday: []
+    };
   }, [selectedDepartment, selectedBranch, selectedYear, selectedSemester, selectedSection, hasBranch]);
 
   // Dynamic list of periods/time slots that have sessions for this timetable
