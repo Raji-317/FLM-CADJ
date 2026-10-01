@@ -99,8 +99,13 @@ export const ClassScheduleView = ({
   const currentWeekDates = getWeekDates(selectedDate);
   const weekDaysShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  const departments = ['All', 'Computer Science', 'AI & ML', 'Mathematics', 'Electronics & Communication'];
-  const branches = ['All', 'CSE', 'AI & ML', 'ECE'];
+  const departments = ['All', 'CSE', 'AI', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
+  const hasBranch = filterDepartment === 'All' || filterDepartment === 'CSE' || filterDepartment === 'AI';
+  const branchOptions = filterDepartment === 'AI' 
+    ? ['All', 'AIML', 'AIDS'] 
+    : filterDepartment === 'CSE' 
+    ? ['All', 'CSE', 'Cyber Security'] 
+    : ['All', 'CSE', 'Cyber Security', 'AIML', 'AIDS'];
 
   const lecturesCount = schedule.filter(s => s.type === 'lecture').length;
   const labsCount = schedule.filter(s => s.type === 'lab').length;
@@ -200,14 +205,17 @@ export const ClassScheduleView = ({
 
         {/* ADMIN FILTERS (DEPARTMENT, BRANCH, FACULTY) */}
         {userType === 'admin' && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className={`grid grid-cols-1 ${hasBranch ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-3 pt-1`}>
             <div>
               <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
                 Filter Department
               </label>
               <select
                 value={filterDepartment}
-                onChange={(e) => setFilterDepartment(e.target.value)}
+                onChange={(e) => {
+                  setFilterDepartment(e.target.value);
+                  setFilterBranch('All');
+                }}
                 className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50/50 font-medium"
               >
                 {departments.map(dept => (
@@ -216,20 +224,22 @@ export const ClassScheduleView = ({
               </select>
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                Filter Branch
-              </label>
-              <select
-                value={filterBranch}
-                onChange={(e) => setFilterBranch(e.target.value)}
-                className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50/50 font-medium"
-              >
-                {branches.map(b => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
-            </div>
+            {hasBranch && (
+              <div>
+                <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                  Filter Branch ({filterDepartment === 'All' ? 'Available' : filterDepartment})
+                </label>
+                <select
+                  value={filterBranch}
+                  onChange={(e) => setFilterBranch(e.target.value)}
+                  className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50/30 text-blue-900 font-semibold"
+                >
+                  {branchOptions.map(b => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">

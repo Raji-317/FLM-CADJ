@@ -304,6 +304,33 @@ const timeToMinutes = (timeStr: string = ''): number => {
   return hours * 60 + minutes;
 };
 
+const matchesDepartment = (profileDept: string = '', targetDept: string = ''): boolean => {
+  if (targetDept === 'All') return true;
+  const p = profileDept.toLowerCase();
+  const t = targetDept.toLowerCase();
+  if (p === t) return true;
+  if (t === 'cse' && (p.includes('computer') || p.includes('cse'))) return true;
+  if (t === 'ai' && (p.includes('ai') || p.includes('intelligence') || p.includes('aiml') || p.includes('aids'))) return true;
+  if (t === 'it' && (p.includes('information') || p === 'it')) return true;
+  if (t === 'ece' && (p.includes('electronics') || p === 'ece')) return true;
+  if (t === 'eee' && (p.includes('electrical') || p === 'eee')) return true;
+  if (t === 'mech' && (p.includes('mechanical') || p === 'mech')) return true;
+  if (t === 'civil' && (p.includes('civil') || p === 'ce')) return true;
+  return false;
+};
+
+const matchesBranch = (sessionBranch: string = '', targetBranch: string = ''): boolean => {
+  if (targetBranch === 'All' || !targetBranch) return true;
+  const s = sessionBranch.toLowerCase();
+  const t = targetBranch.toLowerCase();
+  if (s === t) return true;
+  if (t === 'cse' && (s === 'cse' || s === 'all')) return true;
+  if (t === 'cyber security' && s.includes('cyber')) return true;
+  if (t === 'aiml' && (s.includes('aiml') || s.includes('ai & ml') || s === 'ai')) return true;
+  if (t === 'aids' && (s.includes('aids') || s.includes('data science') || s.includes('ds'))) return true;
+  return false;
+};
+
 /**
  * Returns all college sessions scheduled for a given calendar date,
  * dynamically changing day-to-day (Monday through Saturday, with Sunday as weekend).
@@ -338,7 +365,7 @@ export const getAllCollegeClassesForDate = (
     }
 
     // Check department filter
-    if (targetDept !== 'All' && profile.department !== targetDept) {
+    if (!matchesDepartment(profile.department, targetDept)) {
       continue;
     }
 
@@ -349,7 +376,7 @@ export const getAllCollegeClassesForDate = (
 
     for (const session of dayClasses) {
       // Check branch filter
-      if (targetBranch !== 'All' && session.branch && session.branch !== targetBranch) {
+      if (session.branch && !matchesBranch(session.branch, targetBranch)) {
         continue;
       }
 
