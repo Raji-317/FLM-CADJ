@@ -369,6 +369,64 @@ export const FACULTY_DIRECTORY: Record<string, FacultyProfile> = {
     department: 'CIVIL',
     specialization: 'Structural Analysis & RCC Design',
     role: 'Assistant Professor'
+  },
+
+  // AIML-B Official Faculty (SVECW)
+  'priyankar@edu.com': {
+    name: 'Ms. R. D. Priyanka',
+    email: 'priyankar@edu.com',
+    department: 'AI',
+    specialization: 'Class Incharge - CSE(AI&ML)-B',
+    role: 'Assistant Professor'
+  },
+  'gayatrifac@edu.com': {
+    name: 'Mrs. Y. Gayatri',
+    email: 'gayatrifac@edu.com',
+    department: 'AI',
+    specialization: 'Information Retrieval Systems (IRS)',
+    role: 'Assistant Professor'
+  },
+  'saidivya@edu.com': {
+    name: 'Ms. J. Sai Divya',
+    email: 'saidivya@edu.com',
+    department: 'AI',
+    specialization: 'Computer Networks (CN)',
+    role: 'Assistant Professor'
+  },
+  'swaroopk@edu.com': {
+    name: 'Mr. K. Swaroop',
+    email: 'swaroopk@edu.com',
+    department: 'AI',
+    specialization: 'Operating Systems (OS)',
+    role: 'Assistant Professor'
+  },
+  'saradar@edu.com': {
+    name: 'Mrs. R. Sarada',
+    email: 'saradar@edu.com',
+    department: 'AI',
+    specialization: 'Exploratory Data Analysis using Python (EDA)',
+    role: 'Assistant Professor'
+  },
+  'veerababu@edu.com': {
+    name: 'Mr. S. Veera Babu',
+    email: 'veerababu@edu.com',
+    department: 'AI',
+    specialization: 'Renewable Energy Sources (RES)',
+    role: 'Assistant Professor'
+  },
+  'pradeepj@edu.com': {
+    name: 'Mr. J. Pradeep',
+    email: 'pradeepj@edu.com',
+    department: 'AI',
+    specialization: 'Full Stack development-II (FSD-II)',
+    role: 'Assistant Professor'
+  },
+  'anandd@edu.com': {
+    name: 'Mr. D. Anand',
+    email: 'anandd@edu.com',
+    department: 'AI',
+    specialization: 'User Interface Design using Flutter',
+    role: 'Assistant Professor'
   }
 };
 
@@ -1323,6 +1381,147 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
     ],
     Saturday: [
       { id: 'sl-sat-1', subject: 'SOM (Strength of Materials)', time: '02:40 PM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mrs. Y. Gayatri (IRS)
+  'gayatrifac@edu.com': {
+    Monday: [
+      { id: 'gy-mon-1', subject: 'IRS (Information Retrieval Systems)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Tuesday: [
+      { id: 'gy-tue-1', subject: 'IRS (Information Retrieval Systems)', time: '01:50 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'gy-wed-1', subject: 'IRS (Information Retrieval Systems)', time: '01:00 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Thursday: [
+      { id: 'gy-thu-1', subject: 'IRS (Information Retrieval Systems)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' },
+      { id: 'gy-thu-2', subject: 'IRS LAB / CN LAB', time: '01:00 PM', duration: '2h 30m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
+    ],
+    Saturday: [
+      { id: 'gy-sat-1', subject: 'CN LAB / IRS LAB', time: '08:00 AM', duration: '2h 50m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' },
+      { id: 'gy-sat-2', subject: 'IRS (Information Retrieval Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Ms. J. Sai Divya (CN)
+  'saidivya@edu.com': {
+    Monday: [
+      { id: 'sd-mon-1', subject: 'CN (Computer Networks)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' },
+      { id: 'sd-mon-2', subject: 'CN (Computer Networks)', time: '01:00 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Tuesday: [
+      { id: 'sd-tue-1', subject: 'CN (Computer Networks)', time: '01:00 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'sd-wed-1', subject: 'CN (Computer Networks)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Thursday: [
+      { id: 'sd-thu-1', subject: 'IRS LAB / CN LAB', time: '01:00 PM', duration: '2h 30m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
+    ],
+    Saturday: [
+      { id: 'sd-sat-1', subject: 'CN LAB / IRS LAB', time: '08:00 AM', duration: '2h 50m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' },
+      { id: 'sd-sat-2', subject: 'CN (Computer Networks)', time: '01:50 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mr. K. Swaroop (OS)
+  'swaroopk@edu.com': {
+    Monday: [
+      { id: 'sw-mon-1', subject: 'OS (Operating Systems)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Tuesday: [
+      { id: 'sw-tue-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'sw-wed-1', subject: 'OS (Operating Systems)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Thursday: [
+      { id: 'sw-thu-1', subject: 'OS (Operating Systems)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Friday: [
+      { id: 'sw-fri-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mrs. R. Sarada (EDA)
+  'saradar@edu.com': {
+    Tuesday: [
+      { id: 'sa-tue-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'sa-wed-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' },
+      { id: 'sa-wed-2', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Friday: [
+      { id: 'sa-fri-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Saturday: [
+      { id: 'sa-sat-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mr. S. Veera Babu (RES)
+  'veerababu@edu.com': {
+    Monday: [
+      { id: 'vb-mon-1', subject: 'RES (Renewable Energy Sources)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Tuesday: [
+      { id: 'vb-tue-1', subject: 'RES (Renewable Energy Sources)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'vb-wed-1', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Friday: [
+      { id: 'vb-fri-1', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mr. J. Pradeep (FSD-II)
+  'pradeepj@edu.com': {
+    Tuesday: [
+      { id: 'pj-tue-1', subject: 'FSD-II (Full Stack development-II)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Wednesday: [
+      { id: 'pj-wed-1', subject: 'FSD-II (Full Stack development-II)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Thursday: [
+      { id: 'pj-thu-1', subject: 'FSD-II (Full Stack development-II)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Friday: [
+      { id: 'pj-fri-1', subject: 'FSD-II LAB (Full Stack development-II Lab)', time: '08:00 AM', duration: '2h 50m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Mr. D. Anand (Flutter)
+  'anandd@edu.com': {
+    Monday: [
+      { id: 'an-mon-1', subject: 'Flutter LAB (User Interface Design Using Flutter Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
+    ],
+    Tuesday: [
+      { id: 'an-tue-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Thursday: [
+      { id: 'an-thu-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+    ],
+    Sunday: []
+  },
+
+  // AIML: Ms. R. D. Priyanka (Class Incharge)
+  'priyankar@edu.com': {
+    Friday: [
+      { id: 'py-fri-1', subject: 'LIB (Library & Self Study)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'tutorial', branch: 'AIML', section: 'B' }
+    ],
+    Saturday: [
+      { id: 'py-sat-1', subject: 'COUN (Counselling & Mentoring)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'tutorial', branch: 'AIML', section: 'B' }
     ],
     Sunday: []
   }

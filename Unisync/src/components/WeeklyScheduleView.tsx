@@ -158,62 +158,60 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
     }
 
     // -------------------------------------------------------------
-    // 2. AIML 3RD YEAR 1ST SEM (CLASS: CSE(AIML)-B & A)
-    // As requested: "aiml b third year"
+    // 2. AIML 3RD YEAR 1ST SEM (CLASS: CSE(AI&ML)-B, ROOM: C-215)
+    // As per Official Timetable Image: Class Incharge: Ms. R. D. Priyanka
     // -------------------------------------------------------------
     if (dept === 'AI' && branch === 'AIML' && yr === '3' && sem === 'Sem 1') {
-      const roomNo = sec === 'B' ? 'C-302' : 'C-301';
-      const incharge = sec === 'B' ? 'Dr. P. Sri Charani' : 'Mrs. M. Bhargavi';
+      const roomNo = sec === 'B' ? 'C-215' : 'C-214';
+      const incharge = sec === 'B' ? 'Ms. R. D. Priyanka' : 'Mrs. Y. Gayatri';
 
       return {
         Monday: [
-          { id: 'aiml-3-mon-1', subject: 'AI (Artificial Intelligence)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-mon-2', subject: 'CN (Computer Networks)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-mon-3', subject: 'FSD-2 (Full Stack Development-2)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-mon-4', subject: 'COA (Computer Organization and Architecture)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-mon-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-mon-6', subject: 'AI LAB (Artificial Intelligence Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab 302', teacher: 'Dr. P. Sri Charani & Ms. R.D. Priyanka', students: 45, type: 'lab', department: dept, branch, incharge }
+          { id: 'aiml-3-mon-1', subject: 'RES (Renewable Energy Sources)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. S. Veera Babu', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-2', subject: 'IRS (Information Retrieval Systems)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. Y. Gayatri', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-3', subject: 'CN (Computer Networks)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Ms. J. Sai Divya', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-4', subject: 'OS (Operating Systems)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Swaroop', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-5', subject: 'CN (Computer Networks)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Ms. J. Sai Divya', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-mon-6', subject: 'Flutter LAB (User Interface Design Using Flutter Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab C-215', teacher: 'Mr. D. Anand & Mr. K. Rajasekhar', students: 45, type: 'lab', department: dept, branch, incharge }
         ],
         Tuesday: [
-          { id: 'aiml-3-tue-1', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-2', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-3', subject: 'AI (Artificial Intelligence)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-4', subject: 'CN (Computer Networks)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-5', subject: 'UID using Flutter', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-6', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-tue-7', subject: 'FSD-2 (Full Stack Development-2)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge }
+          { id: 'aiml-3-tue-1', subject: 'FSD-II (Full Stack development-II)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. J. Pradeep', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-2', subject: 'Flutter (User Interface Design using Flutter)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. D. Anand', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-3', subject: 'RES (Renewable Energy Sources)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. S. Veera Babu', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-4', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. R. Sarada', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-5', subject: 'CN (Computer Networks)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Ms. J. Sai Divya', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-6', subject: 'IRS (Information Retrieval Systems)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. Y. Gayatri', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-tue-7', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Swaroop', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
         Wednesday: [
-          { id: 'aiml-3-wed-1', subject: 'RES (Renewable Energy Sources)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-wed-2', subject: 'FSD-2 LAB (Full Stack Development-2 Lab)', time: '08:50 AM', duration: '2h 50m', room: 'Lab 301', teacher: 'Mr. Mohammad Towqeer UL Haq & Mr. MP. Praveen Kumar', students: 45, type: 'lab', department: dept, branch, incharge },
-          { id: 'aiml-3-wed-5', subject: 'COA (Computer Organization and Architecture)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-wed-6', subject: 'CN (Computer Networks)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-wed-7', subject: 'AI (Artificial Intelligence)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge }
+          { id: 'aiml-3-wed-1', subject: 'OS (Operating Systems)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Swaroop', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-2', subject: 'EDA (Exploratory Data Analysis using Python)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. R. Sarada', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-3', subject: 'FSD-II (Full Stack development-II)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. J. Pradeep', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-4', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. R. Sarada', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-5', subject: 'IRS (Information Retrieval Systems)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mrs. Y. Gayatri', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-6', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. S. Veera Babu', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-wed-7', subject: 'CN (Computer Networks)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Ms. J. Sai Divya', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
         Thursday: [
-          { id: 'aiml-3-thu-1', subject: 'CN (Computer Networks)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-thu-2', subject: 'AI (Artificial Intelligence)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-thu-3', subject: 'EDA (Exploratory Data Analysis using Python)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-thu-4', subject: 'RES (Renewable Energy Sources)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-thu-5', subject: 'UID using Flutter LAB (Tinkering Lab)', time: '01:00 PM', duration: '1h 40m', room: 'Lab 303', teacher: 'Mr. K. Rajasekhar & Mr. D. Anand', students: 45, type: 'lab', department: dept, branch, incharge },
-          { id: 'aiml-3-thu-7', subject: 'COA (Computer Organization and Architecture)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge }
+          { id: 'aiml-3-thu-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. D. Anand', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-2', subject: 'FSD-II (Full Stack development-II)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. J. Pradeep', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-3', subject: 'OS (Operating Systems)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Swaroop', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-4', subject: 'IRS (Information Retrieval Systems)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. Y. Gayatri', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-thu-5', subject: 'IRS LAB / CN LAB', time: '01:00 PM', duration: '2h 30m', room: 'Lab C-215', teacher: 'Mrs. Y. Gayatri & Ms. J. Sai Divya', students: 45, type: 'lab', department: dept, branch, incharge }
         ],
         Friday: [
-          { id: 'aiml-3-fri-1', subject: 'COA (Computer Organization and Architecture)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-2', subject: 'UID using Flutter', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Rajasekhar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-3', subject: 'RES (Renewable Energy Sources)', time: '10:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Kalyan Sagar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-4', subject: 'CN (Computer Networks)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: 'Mrs. M. Bhargavi', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-5', subject: 'FSD-2 (Full Stack Development-2)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-6', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-fri-7', subject: 'LIB (Library & Self Study)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge }
+          { id: 'aiml-3-fri-1', subject: 'FSD-II LAB (Full Stack development-II Lab)', time: '08:00 AM', duration: '2h 50m', room: 'Lab C-215', teacher: 'Mr. J. Pradeep & Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-4', subject: 'LIB (Library & Self Study)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mrs. R. Sarada', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-6', subject: 'RES (Renewable Energy Sources)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Mr. S. Veera Babu', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-fri-7', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. K. Swaroop', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
         Saturday: [
-          { id: 'aiml-3-sat-1', subject: 'FSD-2 (Full Stack Development-2)', time: '08:00 AM', duration: '50m', room: roomNo, teacher: 'Mr. Mohammad Towqeer UL Haq', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-sat-2', subject: 'COA (Computer Organization and Architecture)', time: '08:50 AM', duration: '50m', room: roomNo, teacher: 'Mr. K. Srikanth', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-sat-3', subject: 'CN LAB / AI LAB (Hands-on Practice Lab)', time: '10:00 AM', duration: '1h 40m', room: 'Lab 302', teacher: 'Mrs. M. Bhargavi & Dr. P. Sri Charani', students: 45, type: 'lab', department: dept, branch, incharge },
-          { id: 'aiml-3-sat-5', subject: 'COUN (Counselling & Mentoring)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
-          { id: 'aiml-3-sat-6', subject: 'AI (Artificial Intelligence)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Dr. P. Sri Charani', students: 45, type: 'lecture', department: dept, branch, incharge },
-          { id: 'aiml-3-sat-7', subject: 'EDA (Exploratory Data Analysis using Python)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mr. MP. Praveen Kumar', students: 45, type: 'lecture', department: dept, branch, incharge }
+          { id: 'aiml-3-sat-1', subject: 'CN LAB / IRS LAB', time: '08:00 AM', duration: '2h 50m', room: 'Lab C-215', teacher: 'Ms. J. Sai Divya & Mrs. Y. Gayatri', students: 45, type: 'lab', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-4', subject: 'COUN (Counselling & Mentoring)', time: '10:50 AM', duration: '50m', room: roomNo, teacher: incharge, students: 45, type: 'tutorial', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-5', subject: 'EDA (Exploratory Data Analysis using Python)', time: '01:00 PM', duration: '50m', room: roomNo, teacher: 'Mrs. R. Sarada', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-6', subject: 'CN (Computer Networks)', time: '01:50 PM', duration: '50m', room: roomNo, teacher: 'Ms. J. Sai Divya', students: 45, type: 'lecture', department: dept, branch, incharge },
+          { id: 'aiml-3-sat-7', subject: 'IRS (Information Retrieval Systems)', time: '02:40 PM', duration: '50m', room: roomNo, teacher: 'Mrs. Y. Gayatri', students: 45, type: 'lecture', department: dept, branch, incharge }
         ],
         Sunday: []
       };
