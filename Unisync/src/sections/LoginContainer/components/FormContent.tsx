@@ -58,19 +58,24 @@ export const FormContent = ({ onLogin }: FormContentProps) => {
           }
           setShowOtpInput(true);
         } else {
+          // Normalize role to lowercase 'admin' or 'teacher'
+          const returnedRole = (data.user?.role || '').toLowerCase().trim();
+          const userRole: 'teacher' | 'admin' = returnedRole === 'admin' ? 'admin' : 'teacher';
+
           // Verify role matches selected tab
-          if (data.user.role !== activeTab) {
-            const roleName = data.user.role === 'admin' ? 'Administrator' : 'Teacher';
+          if (userRole !== activeTab) {
+            const selectedRoleName = activeTab === 'admin' ? 'Admin' : 'Teacher';
+            const accountRoleName = userRole === 'admin' ? 'Administrator' : 'Teacher';
             const proceed = window.confirm(
-              `⚠️ Role Notice: You selected the '${activeTab.toUpperCase()}' tab, but this account (${data.user.email}) is an ${roleName} account.\n\nClick OK to continue as ${roleName}, or Cancel to switch tabs.`
+              `⚠️ Role Notice: You selected the '${selectedRoleName.toUpperCase()}' tab, but this account (${data.user.email}) is an ${accountRoleName} account.\n\nClick OK to continue as ${accountRoleName}, or Cancel to switch tabs.`
             );
             if (!proceed) {
               setIsLoading(false);
               return;
             }
           }
-          alert(`Login successful as ${data.user.role.toUpperCase()} ✅`);
-          onLogin(data.user.email, data.user.role);
+          alert(`Login successful as ${userRole.toUpperCase()} ✅`);
+          onLogin(data.user.email, userRole);
         }
       } else {
         alert(data.message || "Invalid credentials");
@@ -104,8 +109,10 @@ export const FormContent = ({ onLogin }: FormContentProps) => {
       const data = await response.json();
 
       if (response.ok) {
+        const returnedRole = (data.user?.role || '').toLowerCase().trim();
+        const userRole: 'teacher' | 'admin' = returnedRole === 'admin' ? 'admin' : 'teacher';
         alert("Verification successful! Login successful ✅");
-        onLogin(data.user.email, data.user.role);
+        onLogin(data.user.email, userRole);
       } else {
         alert(data.message || "Invalid OTP code");
       }

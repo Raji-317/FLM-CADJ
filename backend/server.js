@@ -50,7 +50,14 @@ async function seedDatabase() {
       });
       await admin.save();
       console.log("Default admin seeded!");
+    } else if (adminExists.role !== "admin") {
+      adminExists.role = "admin";
+      await adminExists.save();
     }
+
+    // Ensure all user roles are consistently lowercase
+    await User.updateMany({ role: { $regex: /^admin$/i } }, { $set: { role: "admin" } });
+    await User.updateMany({ role: { $regex: /^teacher$/i } }, { $set: { role: "teacher" } });
 
     const teachers = [
       {

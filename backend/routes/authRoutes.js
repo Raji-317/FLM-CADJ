@@ -137,7 +137,7 @@ router.post("/register", async (req, res) => {
       password,
       department: department || "Computer Science",
       employeeId: employeeId || "EMP" + Math.floor(100 + Math.random() * 900),
-      role: role || "teacher",
+      role: (role || "teacher").toLowerCase().trim() === "admin" ? "admin" : "teacher",
       status: "pending" // ✅ Registered accounts start as pending for Admin approval!
     });
 
@@ -189,7 +189,7 @@ router.post("/verify-approved-otp", async (req, res) => {
       message: "OTP verified successfully. Login successful",
       user: {
         email: user.email,
-        role: user.role,
+        role: (user.role || "teacher").toLowerCase().trim() === "admin" ? "admin" : "teacher",
         name: user.name
       }
     });
@@ -237,7 +237,7 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       user: {
         email: user.email,
-        role: user.role,
+        role: (user.role || "teacher").toLowerCase().trim() === "admin" ? "admin" : "teacher",
         name: user.name,
         department: user.department,
         employeeId: user.employeeId,
