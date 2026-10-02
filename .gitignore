@@ -13,6 +13,11 @@ yarn-debug.log*
 # Node modules
 node_modules/
 Unisync/node_modules/
+backend/node_modules/
+**/node_modules/
+dist/
+**/dist/
+.vercel/
 
 # Editor directories
 .vscode/
