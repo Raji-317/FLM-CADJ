@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FacultyProfileModal, FacultyMember } from "@/components/FacultyProfileModal";
+import { API_BASE_URL } from "@/config/api";
 
 export const FacultyManagement = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('All');
@@ -28,7 +29,7 @@ export const FacultyManagement = () => {
   const fetchFaculty = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch("http://localhost:5000/api/teachers");
+      const res = await fetch(`${API_BASE_URL}/api/teachers`);
       const data = await res.json();
       if (res.ok) {
         const mapped = data.map((t: any) => ({
@@ -62,11 +63,25 @@ export const FacultyManagement = () => {
     fetchFaculty();
   }, []);
 
-  const departments = ['All', 'Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology'];
-  const statuses = ['All', 'active', 'pending', 'on_leave', 'substitute'];
+  // Dynamic list of unique departments from fetched faculty, ensuring all college departments are represented
+  const allKnownDepartments = [
+    'All',
+    'Computer Science',
+    'Artificial Intelligence',
+    'Information Technology',
+    'Electronics & Communication',
+    'Electrical & Electronics',
+    'Mechanical Engineering',
+    'Civil Engineering',
+    'Mathematics'
+  ];
+  const dynamicDepts = Array.from(new Set(facultyMembers.map(m => m.department).filter(Boolean)));
+  const departments = ['All', ...Array.from(new Set([...allKnownDepartments.slice(1), ...dynamicDepts]))];
+  const statuses = ['All', 'active', 'on_leave', 'substitute', 'pending'];
 
   const filteredFaculty = facultyMembers.filter(member => {
-    const departmentMatch = selectedDepartment === 'All' || member.department === selectedDepartment;
+    const departmentMatch = selectedDepartment === 'All' || 
+      (member.department && member.department.toLowerCase() === selectedDepartment.toLowerCase());
     const statusMatch = selectedStatus === 'All' || member.status === selectedStatus;
     return departmentMatch && statusMatch;
   });
@@ -88,7 +103,7 @@ export const FacultyManagement = () => {
 
   const handleApproveRegistration = async (email: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/teachers/${email}/approve`, {
+      const res = await fetch(`${API_BASE_URL}/api/teachers/${email}/approve`, {
         method: "PUT"
       });
       if (res.ok) {
@@ -108,7 +123,7 @@ export const FacultyManagement = () => {
     const confirmReject = window.confirm(`Are you sure you want to reject and remove the registration for ${email}?`);
     if (!confirmReject) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/teachers/${email}/reject`, {
+      const res = await fetch(`${API_BASE_URL}/api/teachers/${email}/reject`, {
         method: "PUT"
       });
       if (res.ok) {
@@ -138,7 +153,7 @@ export const FacultyManagement = () => {
 
   const handleApproveReturn = async (memberId: string, email: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/teachers/${email}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/teachers/${email}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "active" })
@@ -178,7 +193,7 @@ export const FacultyManagement = () => {
 
   const handleSaveProfile = async (updatedFaculty: FacultyMember) => {
     try {
-      const res = await fetch("http://localhost:5000/api/profile/update", {
+      const res = await fetch(`${API_BASE_URL}/api/profile/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFaculty)
@@ -198,7 +213,7 @@ export const FacultyManagement = () => {
 
   const handleDeleteFaculty = async (email: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/teachers/${email}`, {
+      const res = await fetch(`${API_BASE_URL}/api/teachers/${email}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -221,7 +236,7 @@ export const FacultyManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch("http://localhost:5000/api/teachers", {
+      const res = await fetch(`${API_BASE_URL}/api/teachers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(createFormData)

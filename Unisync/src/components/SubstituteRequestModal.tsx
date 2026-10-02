@@ -5,6 +5,7 @@ import {
   getTeacherSubject, 
   ClassSession 
 } from "@/utils/scheduleUtils";
+import { API_BASE_URL } from "@/config/api";
 
 interface SubstituteRequestModalProps {
   isOpen: boolean;
@@ -52,8 +53,8 @@ export const SubstituteRequestModal = ({
     const fetchResources = async () => {
       try {
         const [teachersRes, leavesRes] = await Promise.all([
-          fetch("http://localhost:5000/api/teachers"),
-          fetch("http://localhost:5000/api/leaves")
+          fetch(`${API_BASE_URL}/api/teachers`),
+          fetch(`${API_BASE_URL}/api/leaves`)
         ]);
         
         if (teachersRes.ok) {
@@ -173,7 +174,7 @@ export const SubstituteRequestModal = ({
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/substitute/create", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/substitute/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/config/api";
 
 interface ProfileViewProps {
   userEmail: string;
@@ -15,7 +16,7 @@ export const ProfileView = ({ userEmail, userType }: ProfileViewProps) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/profile/${userEmail}`);
+        const res = await fetch(`${API_BASE_URL}/api/profile/${userEmail}`);
         const data = await res.json();
 
         const defaultName = userEmail === 'teacher@edu.com' ? "Dhamini" : (userEmail ? userEmail.split('@')[0] : "Teacher");
@@ -73,7 +74,7 @@ export const ProfileView = ({ userEmail, userType }: ProfileViewProps) => {
   // ✅ SAVE PROFILE
   const handleSave = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/profile/update", {
+      const res = await fetch(`${API_BASE_URL}/api/profile/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

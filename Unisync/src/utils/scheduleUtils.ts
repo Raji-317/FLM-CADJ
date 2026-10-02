@@ -1273,19 +1273,19 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // EEE: Dr. M. V. Sudhakara Rao
   'sudhakararaom@edu.com': {
     Monday: [
-      { id: 'sr-mon-1', subject: 'PE (Power Electronics & Inverters)', time: '08:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+      { id: 'srm-mon-1', subject: 'PE (Power Electronics & Inverters)', time: '08:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
     ],
     Tuesday: [
-      { id: 'sr-tue-1', subject: 'PE (Power Electronics & Inverters)', time: '10:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+      { id: 'srm-tue-1', subject: 'PE (Power Electronics & Inverters)', time: '10:50 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
     ],
     Wednesday: [
-      { id: 'sr-wed-1', subject: 'PE (Power Electronics & Inverters)', time: '01:50 PM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+      { id: 'srm-wed-1', subject: 'PE (Power Electronics & Inverters)', time: '01:50 PM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
     ],
     Thursday: [
-      { id: 'sr-thu-1', subject: 'PE LAB (Power Electronics & Drives Lab)', time: '01:50 PM', duration: '2h', room: 'EE-205 Lab', students: 45, type: 'lab', branch: 'EEE', section: 'A' }
+      { id: 'srm-thu-1', subject: 'PE LAB (Power Electronics & Drives Lab)', time: '01:50 PM', duration: '2h', room: 'EE-205 Lab', students: 45, type: 'lab', branch: 'EEE', section: 'A' }
     ],
     Saturday: [
-      { id: 'sr-sat-1', subject: 'PE (Power Electronics & Inverters)', time: '09:40 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
+      { id: 'srm-sat-1', subject: 'PE (Power Electronics & Inverters)', time: '09:40 AM', duration: '50m', room: 'EE-205', students: 45, type: 'lecture', branch: 'EEE', section: 'A' }
     ],
     Sunday: []
   },
@@ -1313,19 +1313,19 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // MECH: Dr. K. Satyanarayana
   'satyanarayana@edu.com': {
     Monday: [
-      { id: 'ks-mon-1', subject: 'TD (Applied Thermodynamics)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'ksn-mon-1', subject: 'TD (Applied Thermodynamics)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Tuesday: [
-      { id: 'ks-tue-1', subject: 'TD (Applied Thermodynamics)', time: '10:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'ksn-tue-1', subject: 'TD (Applied Thermodynamics)', time: '10:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Wednesday: [
-      { id: 'ks-wed-1', subject: 'TD (Applied Thermodynamics)', time: '01:50 PM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'ksn-wed-1', subject: 'TD (Applied Thermodynamics)', time: '01:50 PM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Thursday: [
-      { id: 'ks-thu-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'ksn-thu-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Saturday: [
-      { id: 'ks-sat-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'ksn-sat-1', subject: 'TD (Applied Thermodynamics)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Sunday: []
   },
@@ -1333,16 +1333,16 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // MECH: Mr. P. Prasad Raju
   'prasadrajup@edu.com': {
     Monday: [
-      { id: 'pr-mon-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'prj-mon-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Tuesday: [
-      { id: 'pr-tue-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'prj-tue-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '08:50 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Thursday: [
-      { id: 'pr-thu-1', subject: 'FM LAB (Fluid Mechanics Laboratory)', time: '01:50 PM', duration: '2h', room: 'ME-301 Lab', students: 45, type: 'lab', branch: 'MECH', section: 'A' }
+      { id: 'prj-thu-1', subject: 'FM LAB (Fluid Mechanics Laboratory)', time: '01:50 PM', duration: '2h', room: 'ME-301 Lab', students: 45, type: 'lab', branch: 'MECH', section: 'A' }
     ],
     Friday: [
-      { id: 'pr-fri-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
+      { id: 'prj-fri-1', subject: 'FM (Fluid Mechanics & Machinery)', time: '09:40 AM', duration: '50m', room: 'ME-301', students: 45, type: 'lecture', branch: 'MECH', section: 'A' }
     ],
     Sunday: []
   },
@@ -1350,16 +1350,16 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // CIVIL: Dr. P. Rama Murthy
   'ramamurthyp@edu.com': {
     Monday: [
-      { id: 'rm-mon-1', subject: 'SURV (Advanced Surveying & GIS)', time: '08:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+      { id: 'rpm-mon-1', subject: 'SURV (Advanced Surveying & GIS)', time: '08:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
     ],
     Tuesday: [
-      { id: 'rm-tue-1', subject: 'SURV (Advanced Surveying & GIS)', time: '10:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+      { id: 'rpm-tue-1', subject: 'SURV (Advanced Surveying & GIS)', time: '10:50 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
     ],
     Thursday: [
-      { id: 'rm-thu-1', subject: 'SURV LAB (Total Station Surveying Lab)', time: '01:50 PM', duration: '2h', room: 'CE-102 Lab', students: 45, type: 'lab', branch: 'CIVIL', section: 'A' }
+      { id: 'rpm-thu-1', subject: 'SURV LAB (Total Station Surveying Lab)', time: '01:50 PM', duration: '2h', room: 'CE-102 Lab', students: 45, type: 'lab', branch: 'CIVIL', section: 'A' }
     ],
     Saturday: [
-      { id: 'rm-sat-1', subject: 'SURV (Advanced Surveying & GIS)', time: '09:40 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
+      { id: 'rpm-sat-1', subject: 'SURV (Advanced Surveying & GIS)', time: '09:40 AM', duration: '50m', room: 'CE-102', students: 45, type: 'lecture', branch: 'CIVIL', section: 'A' }
     ],
     Sunday: []
   },
@@ -1432,19 +1432,19 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // AIML: Mr. K. Swaroop (OS)
   'swaroopk@edu.com': {
     Monday: [
-      { id: 'sw-mon-1', subject: 'OS (Operating Systems)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'swk-mon-1', subject: 'OS (Operating Systems)', time: '10:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Tuesday: [
-      { id: 'sw-tue-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'swk-tue-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Wednesday: [
-      { id: 'sw-wed-1', subject: 'OS (Operating Systems)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'swk-wed-1', subject: 'OS (Operating Systems)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Thursday: [
-      { id: 'sw-thu-1', subject: 'OS (Operating Systems)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'swk-thu-1', subject: 'OS (Operating Systems)', time: '10:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Friday: [
-      { id: 'sw-fri-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'swk-fri-1', subject: 'OS (Operating Systems)', time: '02:40 PM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Sunday: []
   },
@@ -1504,13 +1504,13 @@ const TEACHER_TIMETABLES: { [email: string]: { [day in WeekdayName]?: ClassSessi
   // AIML: Mr. D. Anand (Flutter)
   'anandd@edu.com': {
     Monday: [
-      { id: 'an-mon-1', subject: 'Flutter LAB (User Interface Design Using Flutter Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
+      { id: 'ad-mon-1', subject: 'Flutter LAB (User Interface Design Using Flutter Lab)', time: '01:50 PM', duration: '1h 40m', room: 'Lab C-215', students: 45, type: 'lab', branch: 'AIML', section: 'B' }
     ],
     Tuesday: [
-      { id: 'an-tue-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'ad-tue-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:50 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Thursday: [
-      { id: 'an-thu-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
+      { id: 'ad-thu-1', subject: 'Flutter (User Interface Design using Flutter)', time: '08:00 AM', duration: '50m', room: 'C-215', students: 45, type: 'lecture', branch: 'AIML', section: 'B' }
     ],
     Sunday: []
   },
@@ -1548,8 +1548,8 @@ const timeToMinutes = (timeStr: string = ''): number => {
   return hours * 60 + minutes;
 };
 
-const matchesDepartment = (profileDept: string = '', targetDept: string = ''): boolean => {
-  if (targetDept === 'All') return true;
+export const matchesDepartment = (profileDept: string = '', targetDept: string = ''): boolean => {
+  if (targetDept === 'All' || !targetDept) return true;
   const p = profileDept.toLowerCase();
   const t = targetDept.toLowerCase();
   if (p === t) return true;
@@ -1563,7 +1563,7 @@ const matchesDepartment = (profileDept: string = '', targetDept: string = ''): b
   return false;
 };
 
-const matchesBranch = (sessionBranch: string = '', targetBranch: string = ''): boolean => {
+export const matchesBranch = (sessionBranch: string = '', targetBranch: string = ''): boolean => {
   if (targetBranch === 'All' || !targetBranch) return true;
   const s = sessionBranch.toLowerCase();
   const t = targetBranch.toLowerCase();
@@ -1608,8 +1608,8 @@ export const getAllCollegeClassesForDate = (
       continue;
     }
 
-    // Check department filter
-    if (!matchesDepartment(profile.department, targetDept)) {
+    // Check department filter: if a specific teacher was selected, we prioritize that teacher
+    if (targetTeacher === 'all' && targetDept !== 'All' && !matchesDepartment(profile.department, targetDept)) {
       continue;
     }
 
@@ -1647,9 +1647,12 @@ export const getAllCollegeClassesForDate = (
         }
       }
 
+      // Ensure globally unique session ID across all teachers and college departments
+      const uniqueId = `${lowerEmail}-${session.id || session.time.replace(/\s+/g, '_')}`;
+
       result.push({
         ...session,
-        id: session.id || `${lowerEmail}-${dayName}-${session.time}`,
+        id: uniqueId,
         teacher: profile.name,
         teacherEmail: email,
         department: profile.department,
@@ -1681,10 +1684,10 @@ export const getAllCollegeClassesForDate = (
             if (targetTeacher !== 'all' && targetTeacher !== subTeacherEmail) {
               continue;
             }
-            if (targetDept !== 'All' && subProfile.department !== targetDept) {
+            if (targetTeacher === 'all' && targetDept !== 'All' && !matchesDepartment(subProfile.department, targetDept)) {
               continue;
             }
-            if (targetBranch !== 'All' && cls.branch && cls.branch !== targetBranch) {
+            if (targetBranch !== 'All' && cls.branch && !matchesBranch(cls.branch, targetBranch)) {
               continue;
             }
 
@@ -1695,8 +1698,9 @@ export const getAllCollegeClassesForDate = (
             );
 
             if (!alreadyExists) {
+              const uniqueSubId = `sub-${subTeacherEmail}-${cls.classId || cls._id || Math.random()}-${(cls.time || '').replace(/\s+/g, '_')}`;
               result.push({
-                id: cls.classId || cls._id || `sub-${Math.random()}`,
+                id: uniqueSubId,
                 subject: cls.subject || 'Cover Class',
                 time: cls.time || '10:00 AM',
                 duration: cls.duration || '1h 30m',
@@ -1731,9 +1735,15 @@ export const getScheduleForDate = (email: string, date: Date): ClassSession[] =>
   const lowerEmail = email ? email.toLowerCase().trim() : '';
 
   // Specific defined faculty timetable
+  const profile = FACULTY_DIRECTORY[lowerEmail];
   if (TEACHER_TIMETABLES[lowerEmail]) {
     const dayClasses = TEACHER_TIMETABLES[lowerEmail][dayName];
-    return dayClasses ? [...dayClasses] : [];
+    return dayClasses ? dayClasses.map(cls => ({
+      ...cls,
+      teacher: cls.teacher || profile?.name || '',
+      teacherEmail: cls.teacherEmail || lowerEmail,
+      department: cls.department || profile?.department || 'CSE'
+    })) : [];
   }
 
   // Generic dynamic daily schedule for newly registered or other faculty
@@ -1767,7 +1777,12 @@ export const getScheduleForDate = (email: string, date: Date): ClassSession[] =>
   };
 
   const genericDayClasses = defaultWeekly[dayName];
-  return genericDayClasses ? [...genericDayClasses] : [];
+  return genericDayClasses ? genericDayClasses.map(cls => ({
+    ...cls,
+    teacher: cls.teacher || profile?.name || '',
+    teacherEmail: cls.teacherEmail || lowerEmail,
+    department: cls.department || profile?.department || 'CSE'
+  })) : [];
 };
 
 /**

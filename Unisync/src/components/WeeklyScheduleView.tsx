@@ -44,6 +44,16 @@ const timeToMinutes = (timeStr: string = ''): number => {
   return hours * 60 + minutes;
 };
 
+// Convert duration string (e.g. '50m', '1h 30m', '2h 50m') to total minutes
+const parseDurationMinutes = (durStr: string = ''): number => {
+  let total = 0;
+  const hMatch = durStr.match(/(\d+)\s*h/i);
+  if (hMatch) total += parseInt(hMatch[1], 10) * 60;
+  const mMatch = durStr.match(/(\d+)\s*m/i);
+  if (mMatch) total += parseInt(mMatch[1], 10);
+  return total || 50;
+};
+
 export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: WeeklyScheduleViewProps) => {
   // ✅ User-specified departments: cse, ai, it, ece, eee, mech, civil
   const departments = ['CSE', 'AI', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
@@ -723,55 +733,52 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
   const currentRoom = Object.values(weeklySchedule).flat().find(c => c.room && c.room.startsWith('Room'))?.room || Object.values(weeklySchedule).flat()[0]?.room;
 
   return (
-    <div className="space-y-6">
-      {/* Header Controls */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-gray-100">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">📊</span>
-              <h2 className="text-xl font-bold text-gray-900">
-                Official University Timetable
-              </h2>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                W.E.F: 29.06.2026
-              </span>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Select Department, Academic Year (1-4), Semester (Sem 1 / Sem 2), and Branch to view the exact scheduled timetable.
-            </p>
+    <div className="space-y-3">
+      {/* Header Controls - Compact */}
+      <div className="bg-white rounded-xl shadow-2xs border border-gray-200/90 p-3 sm:p-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <span className="text-base sm:text-lg">📊</span>
+            <h2 className="text-sm sm:text-base font-bold text-gray-900">
+              Official University Timetable
+            </h2>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              W.E.F: 29.06.2026
+            </span>
           </div>
           
-          <div className="flex items-center space-x-3 self-end sm:self-auto">
+          <div className="flex items-center space-x-1.5">
             <button
               onClick={() => navigateWeek('prev')}
-              className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-xs font-semibold rounded-lg transition-colors"
+              className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-[11px] font-bold rounded-md transition-colors"
+              title="Previous Week"
             >
-              ← Previous Week
+              ← Prev
             </button>
-            <span className="text-xs font-bold text-gray-700 bg-gray-50 border px-3 py-1.5 rounded-lg font-mono">
+            <span className="text-[11px] font-bold text-gray-700 bg-gray-50 border px-2.5 py-1 rounded-md font-mono">
               {formatWeekRange()}
             </span>
             <button
               onClick={() => navigateWeek('next')}
-              className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-xs font-semibold rounded-lg transition-colors"
+              className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-[11px] font-bold rounded-md transition-colors"
+              title="Next Week"
             >
-              Next Week →
+              Next →
             </button>
           </div>
         </div>
 
-        {/* Dynamic Filters Row */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${hasBranch ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-4 mb-4`}>
-          {/* 1. Department Dropdown */}
+        {/* Dynamic Filters Row - Compact */}
+        <div className={`grid grid-cols-2 sm:grid-cols-3 ${hasBranch ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-2 mb-2`}>
+          {/* 1. Department */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
               Department
             </label>
             <select
               value={selectedDepartment}
               onChange={(e) => handleDepartmentChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
+              className="w-full px-2 py-1 text-xs font-bold border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
             >
               {departments.map(dept => (
                 <option key={dept} value={dept}>{dept}</option>
@@ -779,21 +786,21 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             </select>
           </div>
 
-          {/* 2. Small Buttons to choose 1 to 4 Years */}
+          {/* 2. Academic Year */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
               Academic Year
             </label>
-            <div className="flex bg-gray-100 p-1 rounded-lg border border-gray-200">
+            <div className="flex bg-gray-100 p-0.5 rounded-md border border-gray-200">
               {years.map(yr => (
                 <button
                   key={yr}
                   type="button"
                   onClick={() => setSelectedYear(yr)}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  className={`flex-1 py-0.5 text-[11px] font-bold rounded transition-all ${
                     selectedYear === yr
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/70'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
                   }`}
                   title={`Year ${yr}`}
                 >
@@ -803,15 +810,15 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             </div>
           </div>
           
-          {/* 3. Semester Dropdown (Sem 1 and Sem 2) */}
+          {/* 3. Semester */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
               Semester
             </label>
             <select
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
+              className="w-full px-2 py-1 text-xs font-semibold border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
             >
               {semesters.map(semester => (
                 <option key={semester} value={semester}>{semester}</option>
@@ -819,16 +826,16 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             </select>
           </div>
           
-          {/* 4. Branch Dropdown (Rendered ONLY for CSE and AI departments) */}
+          {/* 4. Branch */}
           {hasBranch && (
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
                 Branch ({selectedDepartment})
               </label>
               <select
                 value={selectedBranch}
                 onChange={(e) => setSelectedBranch(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-bold border border-blue-300 bg-blue-50/40 text-blue-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs"
+                className="w-full px-2 py-1 text-xs font-bold border border-blue-300 bg-blue-50/40 text-blue-900 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 {branchOptions.map(branch => (
                   <option key={branch} value={branch}>{branch}</option>
@@ -837,15 +844,15 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
             </div>
           )}
           
-          {/* 5. Section Dropdown */}
+          {/* 5. Section */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">
               Section
             </label>
             <select
               value={selectedSection}
               onChange={(e) => setSelectedSection(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-2xs"
+              className="w-full px-2 py-1 text-xs font-semibold border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
             >
               {sections.map(section => (
                 <option key={section} value={section}>Section {section}</option>
@@ -854,156 +861,253 @@ export const WeeklyScheduleView = ({ selectedDate, userType: _userType }: Weekly
           </div>
         </div>
 
-        {/* Current Selection & College Incharge Display Banner */}
-        <div className="bg-gradient-to-r from-blue-50/70 to-indigo-50/50 border border-blue-200/70 p-3.5 rounded-xl mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
-          <div className="space-y-0.5">
-            <p className="text-xs text-gray-900 font-bold flex items-center gap-1.5">
+        {/* Combined Selection Banner & Legend - Single Sleek Strip */}
+        <div className="bg-slate-50 border border-slate-200/80 px-2.5 py-1.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-gray-700 font-medium">
+            <span className="font-bold text-gray-900 flex items-center gap-1">
               <span>🏛️</span>
-              <span>
-                {selectedDepartment}{hasBranch ? ` (${selectedBranch})` : ''} • Year {selectedYear} • {selectedSemester} • Section {selectedSection}
-              </span>
-            </p>
-            <p className="text-[11px] text-gray-500">
-              {currentRoom && <span>Room: <strong className="text-gray-700">{currentRoom}</strong> • </span>}
-              {currentIncharge && <span>Class Incharge: <strong className="text-blue-800">{currentIncharge}</strong></span>}
-            </p>
+              <span>{selectedDepartment}{hasBranch ? ` (${selectedBranch})` : ''} • Y{selectedYear} • {selectedSemester} • Sec {selectedSection}</span>
+            </span>
+            {currentRoom && (
+              <span className="text-gray-500">| Room: <strong className="text-gray-800">{currentRoom}</strong></span>
+            )}
+            {currentIncharge && (
+              <span className="text-gray-500">| Incharge: <strong className="text-blue-700">{currentIncharge}</strong></span>
+            )}
           </div>
-          
-          <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-blue-600 text-white shadow-2xs whitespace-nowrap">
-            {selectedDepartment} {hasBranch ? selectedBranch : ''} - Sec {selectedSection} (Year {selectedYear})
+
+          <div className="flex items-center space-x-3 text-[10px] text-gray-600 font-medium shrink-0">
+            <div className="flex items-center space-x-1">
+              <span className="w-2.5 h-2.5 bg-blue-100 border border-blue-400 rounded-xs"></span>
+              <span>Lecture</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <span className="w-2.5 h-2.5 bg-emerald-100 border border-emerald-400 rounded-xs"></span>
+              <span>Lab</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <span className="w-2.5 h-2.5 bg-purple-100 border border-purple-400 rounded-xs"></span>
+              <span>Tutorial</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Weekly Schedule Grid: Table-Fixed, No Horizontal Scroll, Compact Heights */}
+      <div className="bg-white rounded-xl shadow-2xs border border-gray-200 overflow-hidden">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full border-collapse text-left table-fixed">
+            <thead>
+              <tr className="border-b border-gray-200">
+                {/* Top-Left Corner: Day Header */}
+                <th className="bg-slate-100 text-slate-800 p-1.5 text-center border-r border-slate-200 w-20 sm:w-24 shrink-0">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-700">
+                    DAY \ TIME
+                  </div>
+                </th>
+
+                {/* Horizontal Period / Time Headers */}
+                {activeTimeSlots.map((time, idx) => (
+                  <th 
+                    key={time} 
+                    className="bg-slate-50 text-slate-800 p-1.5 text-center border-r border-slate-200 overflow-hidden"
+                  >
+                    <div className="text-[10px] font-extrabold text-blue-600 uppercase tracking-tight leading-none">
+                      P{idx + 1}
+                    </div>
+                    <div className="text-[10px] font-bold text-gray-800 mt-0.5 truncate flex items-center justify-center gap-0.5">
+                      <span className="text-[9px]">🕒</span>
+                      <span>{time}</span>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {(() => {
+                const hasSundayClasses = (weeklySchedule['Sunday'] || []).length > 0;
+                const displayDays = hasSundayClasses ? dayNames.slice(0, 7) : dayNames.slice(0, 6);
+
+                return displayDays.map((day, dayIdx) => {
+                  const isSunday = day === 'Sunday';
+                  const daySchedule = weeklySchedule[day] || [];
+                  const dayDate = weekDays[dayIdx];
+                  const dateStr = dayDate ? dayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+                  const isToday = dayDate ? dayDate.toDateString() === new Date().toDateString() : false;
+
+                  return (
+                    <tr 
+                      key={day} 
+                      className={`group transition-colors ${isToday ? 'bg-blue-50/25' : 'hover:bg-gray-50/40'}`}
+                    >
+                      {/* Day Column */}
+                      <td className={`p-1 border-r border-slate-200 text-center w-20 sm:w-24 shrink-0 ${
+                        isToday ? 'bg-blue-50/70' : 'bg-slate-50/40 group-hover:bg-slate-50'
+                      }`}>
+                        <div className="font-bold text-xs text-gray-900 leading-tight">
+                          {day.slice(0, 3)}
+                          <span className="hidden sm:inline">{day.slice(3)}</span>
+                        </div>
+                        <div className="text-[9px] text-gray-500 font-medium">
+                          {dateStr}
+                        </div>
+                        <div className="mt-0.5">
+                          {isSunday ? (
+                            <span className="text-[8px] font-bold px-1 py-0.2 rounded-full bg-amber-100 text-amber-800">
+                              Weekend
+                            </span>
+                          ) : (
+                            <span className="text-[8px] font-bold px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700">
+                              {daySchedule.length} P
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Time Slot Columns */}
+                      {isSunday ? (
+                        <td colSpan={activeTimeSlots.length} className="py-1 px-2 text-center bg-slate-50/60">
+                          <div className="flex items-center justify-center gap-1.5 text-gray-400 font-medium text-[10px]">
+                            <span>🏖️</span>
+                            <span>Sunday • University Weekend (No scheduled sessions)</span>
+                          </div>
+                        </td>
+                      ) : (
+                        activeTimeSlots.map((time) => {
+                          const classAtTime = daySchedule.find(cls => cls.time === time);
+                          
+                          // Check if an earlier class covers this period (e.g. 2h or 3h lab)
+                          const currentMinutes = timeToMinutes(time);
+                          const ongoingClass = !classAtTime && daySchedule.find(cls => {
+                            const startMin = timeToMinutes(cls.time);
+                            const durMin = parseDurationMinutes(cls.duration);
+                            return currentMinutes > startMin && currentMinutes < startMin + durMin;
+                          });
+
+                          return (
+                            <td 
+                              key={`${day}-${time}`} 
+                              className="p-1 border-r border-slate-200 align-top overflow-hidden"
+                            >
+                              {classAtTime ? (
+                                <div className="bg-white border border-gray-200/90 rounded-md p-1 shadow-2xs hover:shadow-xs hover:border-blue-400 transition-all flex flex-col justify-between min-h-[46px] h-full">
+                                  <div>
+                                    {/* Subject Title & Type Badge */}
+                                    <div className="flex items-start justify-between gap-1 mb-0.5">
+                                      <h4 
+                                        className="text-[9.5px] font-bold text-gray-900 leading-tight line-clamp-2"
+                                        title={classAtTime.subject}
+                                      >
+                                        {classAtTime.subject}
+                                      </h4>
+                                      <span className={`px-1 py-0.2 rounded text-[7px] font-extrabold uppercase shrink-0 border leading-none ${getTypeColor(classAtTime.type)}`}>
+                                        {classAtTime.type === 'lecture' ? 'LEC' : classAtTime.type === 'lab' ? 'LAB' : 'TUT'}
+                                      </span>
+                                    </div>
+                                    
+                                    {/* Room & Duration */}
+                                    <div className="flex items-center justify-between text-[8.5px] text-gray-500 font-medium">
+                                      <span className="truncate text-gray-700" title={`Room ${classAtTime.room}`}>
+                                        📍 {classAtTime.room}
+                                      </span>
+                                      <span className="font-mono text-[7.5px] text-gray-400 shrink-0">
+                                        {classAtTime.duration}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Teacher Name */}
+                                  <div 
+                                    className="text-[8.5px] font-semibold text-gray-700 truncate pt-0.5 mt-0.5 border-t border-gray-100 flex items-center gap-0.5"
+                                    title={classAtTime.teacher}
+                                  >
+                                    <span className="text-blue-500 text-[8px]">👤</span>
+                                    <span className="truncate">{classAtTime.teacher}</span>
+                                  </div>
+
+                                  {classAtTime.isAdjusted && (
+                                    <div className="text-[7px] font-bold text-orange-700 bg-orange-50 px-1 py-0.2 rounded border border-orange-200 flex items-center gap-0.5 mt-0.5">
+                                      <span>🔄</span> Sub Covered
+                                    </div>
+                                  )}
+                                </div>
+                              ) : ongoingClass ? (
+                                <div className="h-full min-h-[46px] bg-emerald-50/40 border border-dashed border-emerald-300 rounded-md p-1 flex flex-col justify-center items-center text-center">
+                                  <span className="text-[8px]">🔬</span>
+                                  <span className="text-[8.5px] font-bold text-emerald-800 leading-tight truncate w-full" title={ongoingClass.subject}>
+                                    {ongoingClass.subject.split('(')[0].trim()}
+                                  </span>
+                                  <span className="text-[7.5px] font-medium text-emerald-600 leading-none mt-0.5">
+                                    Lab Contd.
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="h-full min-h-[46px] flex items-center justify-center text-gray-300 text-[9px] font-mono hover:bg-gray-50/50 rounded transition-colors group/cell">
+                                  <span className="group-hover/cell:hidden text-gray-300">—</span>
+                                  <span className="hidden group-hover/cell:inline text-[8px] text-gray-400 font-sans font-medium">Free</span>
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })
+                      )}
+                    </tr>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Adjustments Summary - Compact Bar */}
+      <div className="bg-white rounded-xl shadow-2xs border border-gray-200 p-2.5 sm:p-3">
+        <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
+          <h3 className="text-xs font-bold text-gray-900">
+            Timetable Stats • {selectedDepartment}{hasBranch ? ` (${selectedBranch})` : ''} • Year {selectedYear} ({selectedSemester}) • Sec {selectedSection}
+          </h3>
+          <span className="text-[10px] text-gray-500 font-medium">
+            Room: <strong className="text-gray-800">{currentRoom || 'N/A'}</strong> • Incharge: <strong className="text-gray-800">{currentIncharge || 'N/A'}</strong>
           </span>
         </div>
-
-        {/* Legend */}
-        <div className="flex items-center space-x-6 text-xs text-gray-600 font-medium">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-blue-100 border border-blue-300 rounded"></div>
-            <span>Lecture</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-emerald-100 border border-emerald-300 rounded"></div>
-            <span>Laboratory</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-purple-100 border border-purple-300 rounded"></div>
-            <span>Tutorial / Honors / Mentorship</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Weekly Schedule Grid */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <div className="grid grid-cols-8 gap-0">
-          {/* Time Column Header */}
-          <div className="bg-gray-50 p-4 border-r border-b font-bold text-gray-800 text-xs uppercase tracking-wider">
-            Period / Time
-          </div>
-          
-          {/* Day Headers */}
-          {dayNames.slice(0, 7).map((day, index) => (
-            <div key={day} className="bg-gray-50 p-3.5 border-r border-b font-bold text-gray-800 text-center">
-              <div className="text-xs uppercase tracking-wider">{day}</div>
-              <div className="text-[11px] text-gray-500 font-medium mt-0.5">
-                {weekDays[index]?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="bg-blue-50/60 border border-blue-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+            <div>
+              <span className="block text-[9px] font-bold text-blue-900 uppercase">Total Periods</span>
+              <span className="text-[9px] text-blue-600/80">Mon - Sat</span>
             </div>
-          ))}
-
-          {/* Time Slots Rows */}
-          {activeTimeSlots.map((time) => (
-            <React.Fragment key={time}>
-              {/* Time Label */}
-              <div className="bg-gray-50 p-3.5 border-r border-b text-xs font-bold text-gray-700 flex items-center">
-                {time}
-              </div>
-              
-              {/* Day Cells */}
-              {dayNames.slice(0, 7).map((day) => {
-                const daySchedule = weeklySchedule[day] || [];
-                const classAtTime = daySchedule.find(cls => cls.time === time);
-
-                return (
-                  <div key={`${day}-${time}`} className="border-r border-b p-2 min-h-[90px] bg-white">
-                    {classAtTime ? (
-                      <div className="bg-white border rounded-lg p-2.5 shadow-2xs hover:shadow-md transition-shadow h-full flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-1 mb-1">
-                            <h4 className="text-xs font-bold text-gray-900 leading-tight">
-                              {classAtTime.subject}
-                            </h4>
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${getTypeColor(classAtTime.type)}`}>
-                              {classAtTime.type}
-                            </span>
-                          </div>
-                          
-                          <div className="text-[11px] text-gray-600 space-y-0.5 mt-1.5">
-                            <div className="flex items-center justify-between font-medium">
-                              <span>📍 {classAtTime.room}</span>
-                              <span>🕒 {classAtTime.duration}</span>
-                            </div>
-                            
-                            <div className="font-semibold text-gray-800 text-xs mt-1 pt-1 border-t border-gray-100 flex items-center gap-1">
-                              <span>👨‍🏫</span>
-                              <span className="truncate" title={classAtTime.teacher}>{classAtTime.teacher}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {classAtTime.isAdjusted && (
-                          <div className="flex items-center gap-1 mt-1.5 pt-1 border-t border-gray-100">
-                            <span className="text-[10px] font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
-                              🔄 Peer Covered
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ) : day === 'Sunday' ? (
-                      <div className="h-full flex items-center justify-center text-[11px] text-gray-400 italic font-medium">
-                        Weekend
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      {/* Adjustments Summary */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h3 className="text-base font-bold text-gray-900 mb-4">
-          Timetable Summary • {selectedDepartment}{hasBranch ? ` (${selectedBranch})` : ''} • Year {selectedYear} ({selectedSemester}) • Section {selectedSection}
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-blue-50/60 border border-blue-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1">Total Scheduled Periods</h4>
-            <p className="text-2xl font-black text-blue-700">
+            <span className="text-base sm:text-lg font-black text-blue-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.length, 0)}
-            </p>
-            <p className="text-xs text-blue-600/80 mt-0.5">Sessions across Monday - Saturday</p>
+            </span>
           </div>
 
-          <div className="bg-emerald-50/60 border border-emerald-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-emerald-900 uppercase tracking-wider mb-1">Practical Lab Periods</h4>
-            <p className="text-2xl font-black text-emerald-700">
+          <div className="bg-emerald-50/60 border border-emerald-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+            <div>
+              <span className="block text-[9px] font-bold text-emerald-900 uppercase">Practical Labs</span>
+              <span className="text-[9px] text-emerald-600/80">Lab Sessions</span>
+            </div>
+            <span className="text-base sm:text-lg font-black text-emerald-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.filter(c => c.type === 'lab').length, 0)}
-            </p>
-            <p className="text-xs text-emerald-600/80 mt-0.5">Laboratory & Tinkering sessions</p>
+            </span>
           </div>
 
-          <div className="bg-purple-50/60 border border-purple-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-purple-900 uppercase tracking-wider mb-1">Lectures & Tutorials</h4>
-            <p className="text-2xl font-black text-purple-700">
+          <div className="bg-purple-50/60 border border-purple-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+            <div>
+              <span className="block text-[9px] font-bold text-purple-900 uppercase">Lectures & Tut</span>
+              <span className="text-[9px] text-purple-600/80">Theory & Mentoring</span>
+            </div>
+            <span className="text-base sm:text-lg font-black text-purple-700">
               {Object.values(weeklySchedule).reduce((acc, curr) => acc + curr.filter(c => c.type === 'lecture' || c.type === 'tutorial').length, 0)}
-            </p>
-            <p className="text-xs text-purple-600/80 mt-0.5">Core theory, honors & mentoring</p>
+            </span>
           </div>
 
-          <div className="bg-amber-50/60 border border-amber-200/60 p-4 rounded-xl">
-            <h4 className="font-bold text-xs text-amber-900 uppercase tracking-wider mb-1">Classroom Assigned</h4>
-            <p className="text-2xl font-black text-amber-700">{currentRoom || 'Assigned Hall'}</p>
-            <p className="text-xs text-amber-600/80 mt-0.5">{currentIncharge ? `Incharge: ${currentIncharge}` : 'Department Room'}</p>
+          <div className="bg-amber-50/60 border border-amber-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+            <div>
+              <span className="block text-[9px] font-bold text-amber-900 uppercase">Assigned Hall</span>
+              <span className="text-[9px] text-amber-600/80 truncate max-w-[100px] block">{currentIncharge || 'Dept Room'}</span>
+            </div>
+            <span className="text-xs sm:text-sm font-black text-amber-700 truncate">{currentRoom || 'Hall'}</span>
           </div>
         </div>
       </div>

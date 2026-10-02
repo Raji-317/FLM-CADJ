@@ -3,6 +3,8 @@ import {
   getScheduleForDate, 
   getScheduleWithSubstitutions, 
   getAllCollegeClassesForDate, 
+  matchesDepartment,
+  matchesBranch,
   FACULTY_DIRECTORY, 
   ClassSession 
 } from "@/utils/scheduleUtils";
@@ -31,7 +33,7 @@ export const ClassScheduleView = ({
   const [filterTeacher, setFilterTeacher] = useState('All');
 
   // Dynamic schedule computation
-  const schedule: ClassSession[] = userType === 'admin'
+  const rawSchedule: ClassSession[] = userType === 'admin'
     ? getAllCollegeClassesForDate(selectedDate, {
         department: filterDepartment,
         branch: filterBranch,
@@ -41,6 +43,21 @@ export const ClassScheduleView = ({
     : substituteLeaves.length > 0 
       ? getScheduleWithSubstitutions(userEmail, selectedDate, substituteLeaves)
       : getScheduleForDate(userEmail, selectedDate);
+
+  // Strict defensive filtering to guarantee 100% synchronization between filters, badges, and cards
+  const schedule = rawSchedule.filter(session => {
+    if (userType !== 'admin') return true;
+    if (filterTeacher !== 'All' && session.teacherEmail?.toLowerCase().trim() !== filterTeacher.toLowerCase().trim()) {
+      return false;
+    }
+    if (filterDepartment !== 'All' && !matchesDepartment(session.department || '', filterDepartment)) {
+      return false;
+    }
+    if (filterBranch !== 'All' && session.branch && !matchesBranch(session.branch, filterBranch)) {
+      return false;
+    }
+    return true;
+  });
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -106,6 +123,12 @@ export const ClassScheduleView = ({
     : filterDepartment === 'CSE' 
     ? ['All', 'CSE', 'Cyber Security'] 
     : ['All', 'CSE', 'Cyber Security', 'AIML', 'AIDS'];
+
+  // Scope faculty dropdown options dynamically to the selected department
+  const availableFaculty = Object.values(FACULTY_DIRECTORY).filter(fac => {
+    if (filterDepartment === 'All') return true;
+    return matchesDepartment(fac.department, filterDepartment);
+  });
 
   const lecturesCount = schedule.filter(s => s.type === 'lecture').length;
   const labsCount = schedule.filter(s => s.type === 'lab').length;
@@ -215,6 +238,7 @@ export const ClassScheduleView = ({
                 onChange={(e) => {
                   setFilterDepartment(e.target.value);
                   setFilterBranch('All');
+                  setFilterTeacher('All');
                 }}
                 className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50/50 font-medium"
               >
@@ -243,15 +267,25 @@ export const ClassScheduleView = ({
 
             <div>
               <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                Filter Faculty Member
+                Filter Faculty Member {filterDepartment !== 'All' ? `(${filterDepartment})` : ''}
               </label>
               <select
                 value={filterTeacher}
-                onChange={(e) => setFilterTeacher(e.target.value)}
+                onChange={(e) => {
+                  const selectedEmail = e.target.value;
+                  setFilterTeacher(selectedEmail);
+                  if (selectedEmail !== 'All') {
+                    const prof = FACULTY_DIRECTORY[selectedEmail];
+                    if (prof && filterDepartment !== 'All' && !matchesDepartment(prof.department, filterDepartment)) {
+                      setFilterDepartment(prof.department);
+                      setFilterBranch('All');
+                    }
+                  }
+                }}
                 className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50/50 font-medium"
               >
-                <option value="All">All Faculty Members</option>
-                {Object.values(FACULTY_DIRECTORY).map(fac => (
+                <option value="All">All Faculty Members ({availableFaculty.length})</option>
+                {availableFaculty.map(fac => (
                   <option key={fac.email} value={fac.email}>
                     {fac.name} ({fac.department})
                   </option>
@@ -290,7 +324,7 @@ export const ClassScheduleView = ({
 
               return (
                 <div 
-                  key={session.id} 
+                  key={`${session.id}-${session.teacherEmail || ''}-${session.time}`} 
                   className={`border rounded-xl p-4 transition-all ${
                     isSub 
                       ? 'bg-purple-50/60 border-purple-300 ring-1 ring-purple-200 hover:shadow-md' 
@@ -338,16 +372,18 @@ export const ClassScheduleView = ({
                         )}
                       </div>
 
-                      {/* Faculty Details in Admin / View mode */}
-                      <div className="flex items-center gap-2 text-xs text-gray-700 mt-1 mb-2 font-medium">
-                        <span className="text-blue-600 font-bold flex items-center gap-1">
-                          <span>👨‍🏫</span>
-                          <span>Faculty: {session.teacher || session.teacherEmail || 'Assigned Professor'}</span>
-                        </span>
-                        {session.teacherEmail && (
-                          <span className="text-gray-400 text-[11px]">({session.teacherEmail})</span>
-                        )}
-                      </div>
+                      {/* Faculty Details in Admin mode only */}
+                      {userType === 'admin' && (session.teacher || session.teacherEmail) && (
+                        <div className="flex items-center gap-2 text-xs text-gray-700 mt-1 mb-2 font-medium">
+                          <span className="text-blue-600 font-bold flex items-center gap-1">
+                            <span>👨‍🏫</span>
+                            <span>Faculty: {session.teacher || session.teacherEmail}</span>
+                          </span>
+                          {session.teacherEmail && session.teacher && (
+                            <span className="text-gray-400 text-[11px]">({session.teacherEmail})</span>
+                          )}
+                        </div>
+                      )}
 
                       {/* Detail notes for substitute or covered classes */}
                       {isSub && (

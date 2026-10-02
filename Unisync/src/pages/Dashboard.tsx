@@ -9,6 +9,7 @@ import { AdminClassAdjustments, ClassAdjustment } from "@/components/AdminClassA
 import { FacultyManagement } from "@/components/FacultyManagement";
 import { ReportsView } from "@/components/ReportsView";
 import { getScheduleWithSubstitutions } from "@/utils/scheduleUtils";
+import { API_BASE_URL } from "@/config/api";
 
 interface DashboardProps {
   userType: 'teacher' | 'admin';
@@ -38,7 +39,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
   const fetchUserProfile = async () => {
     if (!userEmail) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/profile/${userEmail}`);
+      const res = await fetch(`${API_BASE_URL}/api/profile/${userEmail}`);
       const data = await res.json();
       if (res.ok && data) {
         setCurrentUserProfile(data);
@@ -53,7 +54,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
 
   const fetchRegistrationRequests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/teachers/pending");
+      const res = await fetch(`${API_BASE_URL}/api/teachers/pending`);
       const data = await res.json();
       if (res.ok) {
         setRegistrationRequests(data);
@@ -74,7 +75,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
 
   const fetchAdminStats = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/reports/summary");
+      const res = await fetch(`${API_BASE_URL}/api/leaves/reports/summary`);
       const data = await res.json();
       if (res.ok) {
         setAdminStats(data);
@@ -92,7 +93,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
 
   const handleRegistrationAction = async (email: string, action: 'approve' | 'reject') => {
     try {
-      const res = await fetch(`http://localhost:5000/api/teachers/${email}/${action}`, {
+      const res = await fetch(`${API_BASE_URL}/api/teachers/${email}/${action}`, {
         method: "PUT"
       });
       if (res.ok) {
@@ -109,7 +110,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
 
   const handleLeaveRequestAction = async (leaveId: string, action: 'approve' | 'reject') => {
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/admin-action", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/admin-action`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leaveId, action })
@@ -142,8 +143,8 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
     if (!userEmail) return;
     try {
       const url = userType === "admin"
-        ? "http://localhost:5000/api/leaves/admin"
-        : `http://localhost:5000/api/leaves/my/${userEmail}`;
+        ? `${API_BASE_URL}/api/leaves/admin`
+        : `${API_BASE_URL}/api/leaves/my/${userEmail}`;
       const res = await fetch(url);
       const data = await res.json();
       if (res.ok) {
@@ -166,7 +167,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
   const fetchSubstituteLeaves = async () => {
     if (!userEmail) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/leaves/substitute/${userEmail}`);
+      const res = await fetch(`${API_BASE_URL}/api/leaves/substitute/${userEmail}`);
       const data = await res.json();
       if (res.ok) {
         const sorted = Array.isArray(data) ? [...data].sort((a: any, b: any) => {
@@ -206,7 +207,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
   // ✅ NEW: Respond to a substitute request (accept/reject)
   const handleSubstituteResponse = async (leaveId: string, classId: string, status: 'accepted' | 'rejected') => {
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/substitute-response", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/substitute-response`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -1648,7 +1649,7 @@ export const Dashboard = ({ userType, userEmail, onLogout }: DashboardProps) => 
           </aside>
 
           {/* MAIN CONTENT */}
-          <main className="flex-1 p-8">
+          <main className="flex-1 p-4 sm:p-5 overflow-x-hidden">
             {renderContent()}
           </main>
 

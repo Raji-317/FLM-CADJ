@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RegistrationModal from "../../../components/RegistrationModal";
+import { API_BASE_URL } from "../../../config/api";
 
 interface FormContentProps {
   onLogin: (email: string, type: 'teacher' | 'admin') => void;
@@ -36,7 +37,7 @@ export const FormContent = ({ onLogin }: FormContentProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -95,7 +96,7 @@ export const FormContent = ({ onLogin }: FormContentProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/verify-approved-otp", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verify-approved-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

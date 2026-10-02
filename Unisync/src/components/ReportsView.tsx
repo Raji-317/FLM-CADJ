@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/config/api";
 
 interface ReportData {
   totalFaculty: number;
@@ -35,7 +36,7 @@ export const ReportsView = () => {
     const fetchReportData = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/leaves/reports/summary");
+        const res = await fetch(`${API_BASE_URL}/api/leaves/reports/summary`);
         const data = await res.json();
         if (res.ok) {
           // Pre-populate missing departments to match expected UI layout safely

@@ -5,6 +5,7 @@ import {
   getTeacherSubject, 
   ClassSession 
 } from "@/utils/scheduleUtils";
+import { API_BASE_URL } from "@/config/api";
 
 interface LeaveRequestModalProps {
   isOpen: boolean;
@@ -60,7 +61,7 @@ export const LeaveRequestModal = ({ isOpen, onClose, onSubmit, userEmail }: Leav
     if (isOpen) {
       const fetchTeachers = async () => {
         try {
-          const res = await fetch("http://localhost:5000/api/teachers");
+          const res = await fetch(`${API_BASE_URL}/api/teachers`);
           const data = await res.json();
           if (res.ok && Array.isArray(data)) {
             setTeachers(data);
@@ -280,7 +281,7 @@ export const LeaveRequestModal = ({ isOpen, onClose, onSubmit, userEmail }: Leav
           }))
       };
 
-      const res = await fetch("http://localhost:5000/api/leaves/create", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

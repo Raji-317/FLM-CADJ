@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAvailableTeachersForSlot, getTeacherSubject } from "@/utils/scheduleUtils";
+import { API_BASE_URL } from "@/config/api";
 
 const defaultClasses = [
   'Computer Networks & Security',
@@ -70,7 +71,7 @@ export const AdminClassAdjustments = ({ onCreateAdjustment }: AdminClassAdjustme
   // ✅ FETCH LEAVES FROM BACKEND
   const fetchLeaves = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/admin");
+      const res = await fetch(`${API_BASE_URL}/api/leaves/admin`);
       const data = await res.json();
       if (res.ok) {
         setLeaveRequests(data);
@@ -83,7 +84,7 @@ export const AdminClassAdjustments = ({ onCreateAdjustment }: AdminClassAdjustme
   // ✅ FETCH TEACHERS FROM BACKEND
   const fetchTeachers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/teachers");
+      const res = await fetch(`${API_BASE_URL}/api/teachers`);
       const data = await res.json();
       if (res.ok) {
         setTeachers(data);
@@ -139,7 +140,7 @@ export const AdminClassAdjustments = ({ onCreateAdjustment }: AdminClassAdjustme
   // ✅ HANDLE APPROVAL ACTIONS
   const handleAdminAction = async (leaveId: string, action: 'approve' | 'reject') => {
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/admin-action", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/admin-action`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leaveId, action })
@@ -166,7 +167,7 @@ export const AdminClassAdjustments = ({ onCreateAdjustment }: AdminClassAdjustme
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/leaves/assign-substitute", {
+      const res = await fetch(`${API_BASE_URL}/api/leaves/assign-substitute`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leaveId, classId, teacherEmail })
